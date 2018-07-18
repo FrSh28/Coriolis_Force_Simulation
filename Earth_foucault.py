@@ -150,7 +150,6 @@ while True:
             mous = scene.mouse.getevent()
             if mous.click == 'left':
                 start = True
-                dott = t+1
                 ball.make_trail = False
                 footage.make_trail = True
                 formula_ball.make_trail = False
