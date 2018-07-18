@@ -97,7 +97,7 @@ def mouse_method(evt):
         pball.append([balln+1, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0])
 
 def key_method(evt):
-    global mode, balln, degree, rota_demo, w, fire_angle, fire_dir
+    global mode, degree, rota_demo, w, fire_angle, fire_dir
     k = evt.key
     if k == "i":
         mode = "inside"
