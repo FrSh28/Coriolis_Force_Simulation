@@ -52,7 +52,7 @@ formula_arrows = []
 
 def mouse_method(evt):
     global balln
-    if evt.click == 'left':
+    if evt.click == "left":
         balln += 1
         bcollor = (uniform(0.3, 0.6) , uniform(0.3, 0.6) , uniform(0.3, 0.6))
         balls.append(sphere(pos = (plate.frame_to_world(player.pos).x, 0, plate.frame_to_world(player.pos).z), v = count_v(dt, poss)*1 + balls_v * norm(plate.frame_to_world(throw.axis)),

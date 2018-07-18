@@ -131,7 +131,7 @@ while True:
     else:
         if scene.mouse.events:          #±Ò°Ê
             mous = scene.mouse.getevent()
-            if mous.click == 'left':
+            if mous.click == "left":
                 start = True
                 dott = t+1
                 ball.make_trail = True
