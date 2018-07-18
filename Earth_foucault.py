@@ -84,7 +84,7 @@ ballpos_list = []
 start = False
 
 def key_method(evt):
-    global mode, pn, degree, w, rota_demo
+    global mode, degree, w, rota_demo
     key = evt.key
     if key == "i":
         mode = "inside"
