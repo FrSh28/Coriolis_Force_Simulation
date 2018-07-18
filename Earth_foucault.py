@@ -51,20 +51,21 @@ ceiling = sphere(frame = ground, pos = (0, Length+0.3, 0), color = color.gray(0.
 ball_init = sphere(frame = ground, pos = (Length * -sin(angle), ceiling.pos.y - Length * cos(angle), 0), visible = False)
 ground.rotate(angle = radians(90-latitude), axis = (0, 0, 1))
 
-ball = sphere(pos = earth.frame_to_world(ground.frame_to_world(ball_init.pos)), radius = 0.15, color = color.red,
-              v = vector(0.0, 0.0, 0.0), a = vector(0.0, 0.0, 0.0), opacity = 0.5, material = materials.rough, make_trail = False)
-stick = cylinder(pos = earth.frame_to_world(ground.frame_to_world(ceiling.pos)), length = Length, radius = 0.05, color = ball.color, opacity = 0.5, material = materials.rough)
+ball = sphere(pos = earth.frame_to_world(ground.frame_to_world(ball_init.pos)), radius = 0.15,
+              v = vector(0.0, 0.0, 0.0), a = vector(0.0, 0.0, 0.0), make_trail = False, color = color.red, material = materials.rough, opacity = 0.5)
+stick = cylinder(pos = earth.frame_to_world(ground.frame_to_world(ceiling.pos)), length = Length, radius = 0.05, color = ball.color, material = materials.rough, opacity = 0.5)
 stick.axis = ball.pos - stick.pos
 footage = cylinder(frame = ground, pos = (earth.world_to_frame(ground.world_to_frame(ball.pos)).x, 0.1, earth.world_to_frame(ground.world_to_frame(ball.pos)).z),
-                   radius = ball.radius, color = ball.color, axis = (0, 0.001, 0), opacity = 0.5, material = materials.rough, make_trail = False)
+                   radius = ball.radius, axis = (0, 0.001, 0), make_trail = False, color = ball.color, material = materials.rough, opacity = 0.5)
 
-formula_ball = sphere(frame = earth, pos = ground.frame_to_world(ball_init.pos), radius = 0.15, color = color.blue,
-                      v = vector(0.0,0.0,0.0), a = vector(0.0, 0.0, 0.0), opacity = 0.5, material = materials.rough, make_trail = False)
-formula_stick = cylinder(frame = earth, pos = ground.frame_to_world(ceiling.pos), length = Length, radius = 0.05, color = formula_ball.color, opacity = 0.5, material = materials.rough)
+formula_ball = sphere(frame = earth, pos = ground.frame_to_world(ball_init.pos), radius = 0.15,
+                      v = vector(0.0,0.0,0.0), a = vector(0.0, 0.0, 0.0), make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5)
+formula_stick = cylinder(frame = earth, pos = ground.frame_to_world(ceiling.pos), length = Length, radius = 0.05, color = formula_ball.color, material = materials.rough, opacity = 0.5)
 formula_stick.axis = formula_ball.pos - formula_stick.pos
 formula_footage = cylinder(frame = ground, pos = (ground.world_to_frame(formula_ball.pos).x, 0.1, ground.world_to_frame(formula_ball.pos).z),
-                           radius = formula_ball.radius, color = formula_ball.color, axis = (0, 0.001, 0), opacity = 0.5, material = materials.rough, make_trail = False)
+                           radius = formula_ball.radius, axis = (0, 0.001, 0), make_trail = False, color = formula_ball.color, material = materials.rough, opacity = 0.5)
 
+scene.forward = -earth.frame_to_world(ground.pos)
 scene.autoscale = False
 
 def update_all(dt, scene):
@@ -110,17 +111,13 @@ sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.4)
 [curve(pos = [(4000, -Er*1.2, z*400), (-4000, -Er*1.2, z*400)], color = color.gray(0.5))for z in range(-10, 11)]
 [curve(pos = [(x*400, -Er*1.2, 4000), (x*400, -Er*1.2, -4000)], color = color.gray(0.5))for x in range(-10, 11)]
 
-scene.forward = -earth.frame_to_world(ground.pos)
 mode = "outside"
-
-scene.waitfor("click")
-scene.bind("keydown", key_method)
-
 t = 0.0
 dt = 0.0001
 
+scene.waitfor("click")
+scene.bind("keydown", key_method)
 timer.color = color.yellow
-timer.text = str(int(t*10)/10.0) + " hr."
 
 while True:
     rate(0.03/dt)
@@ -151,7 +148,7 @@ while True:
             if mous.click == "left":
                 start = True
                 ball.make_trail = True
-                ball.retain = 50
+                ball.retain = 500
                 footage.make_trail = True
                 footage.retain = 500
                 trail = points(frame = ground, pos = [ground.world_to_frame(earth.world_to_frame(ball.pos))], color = color.red, size = 1)

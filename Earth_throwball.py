@@ -35,11 +35,11 @@ curve(display = gd1, pos = [project(-pi/2, -pi, 0), project(pi/2, -pi, 0), proje
                             project(-pi/2, pi, 0), project(-pi/2, -pi, 0)], color = color.gray(0.8), size = 3)
 for lat in range(-90, 91, 30):
     curve(display = gd1, pos = [project(radians(lat), -pi, 0), project(radians(lat), pi, 0)], color = color.gray(0.4), size = 1)
-    label(display = gd1, pos = project(radians(lat), -pi*0.9, 0), text = str(lat), box = False, line = False, opacity = 0)
+    label(display = gd1, text = str(lat), pos = project(radians(lat), -pi*0.9, 0), box = False, line = False, opacity = 0)
 for lon in range(-180, 181, 30):
     curve(display = gd1, pos = [project(pi/2, radians(lon), 0), project(-pi/2, radians(lon), 0)], color = color.gray(0.4), size = 1)
 
-label(display = gd1, pos = project(pi/2, -pi, 0)+vector(3500, 3000, 0), text = "latitude", box = False, line = False, opacity = 0)
+label(display = gd1, text = "latitude", pos = project(pi/2, -pi, 0) + vector(3500, 3000, 0), box = False, line = False, opacity = 0)
 updater = sphere(display = gd1, color = color.white, make_trail = True, retain = 1050, trail_type = "points")
 updater.trail_object.size = 1
 
@@ -51,7 +51,7 @@ scene = display(width = 900, height = 700, center = (0, 0, 0), background = (0, 
 [curve(pos = [(4000, -Er*1.2, z*400), (-4000, -Er*1.2, z*400)], color = color.gray(0.5))for z in range(-10, 11)]
 [curve(pos = [(x*400, -Er*1.2, 4000), (x*400, -Er*1.2, -4000)], color = color.gray(0.5))for x in range(-10, 11)]
 
-timer = label(text = "Click To Start", pos = scene.center, box = False, line = False, opacity = 0, yoffset = 200, height = 50, color = color.red)
+timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(int(degree*100/15.0)/100.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(W S):\n    %s  deg\n  Fire Direction(A D):\n    %s  deg\n  Earth Radius:\n    %s  Km"%(rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er),
                    pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
@@ -59,7 +59,7 @@ info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N
 earth = frame(pos = (0, 0, 0))
 cylinder(pos = (0, -Er*1.2, 0), radius = 20, axis = (0, 3*Er, 0), color = color.green)
 sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.4)
-player = pyramid(frame = earth, pos = (0, Er * sin(radians(latitude)), Er * cos(radians(latitude))), size = (100, 100, 100), color = color.red)
+player = pyramid(frame = earth, pos = (0, Er * sin(radians(latitude)), Er * cos(radians(latitude))), color = color.red, size = (100, 100, 100))
 player.axis = norm(player.pos)
 fireaxis = arrow(frame = earth, pos = player.pos, shaftwidth = 50, color = color.blue, material = materials.rough)
 fireaxis.axis = rotate(rotate(rotate(vector(1, 0, 0), angle = radians(fire_angle), axis = (0, -1, 0)), angle = radians(fire_dir), axis = (0, 0, 1)), angle = radians(latitude), axis = (-1, 0, 0)) * 500
@@ -85,12 +85,12 @@ def mouse_method(evt):
     if evt.click == "left":
         balln += 1
         graph_color = (uniform(0.3, 0.8), uniform(0.3, 0.8), uniform(0.3, 0.8))
-        balls.append(sphere(pos = earth.frame_to_world(player.pos), v = count_v(dt, poss) + balls_v * norm(earth.frame_to_world(fireaxis.axis)),
-                            radius = 40, color = color.red, material = materials.rough, make_trail = True, opacity = 0.5, tleft = 2.0, num = balln,
+        balls.append(sphere(pos = earth.frame_to_world(player.pos), radius = 40, v = count_v(dt, poss) + balls_v * norm(earth.frame_to_world(fireaxis.axis)),
+                            tleft = 2.0, num = balln, make_trail = True, color = color.red, material = materials.rough, opacity = 0.5,
                             graph_trail = points(display = gd1, color = graph_color, size = 1.5), deviation = gdots(gdisplay = gd, color = graph_color, size = 1)))
-        formula_balls.append(sphere(frame = earth, pos = player.pos, v = balls_v * norm(fireaxis.axis), radius = 40, color = color.blue, material = materials.rough, make_trail = False, opacity = 0.5))
-        arrows.append(arrow(frame = earth, pos = balls[-1].pos, axis = (0, 0, 0), shaftwidth = 20, color = color.red, opacity = 0.5, material = materials.rough))
-        formula_arrows.append(arrow(frame = earth, pos = balls[-1].pos, axis = (0, 0, 0), shaftwidth = 20, color = color.blue, opacity = 0.5, material = materials.rough))
+        formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, v = balls_v * norm(fireaxis.axis), make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5))
+        arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = (0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
+        formula_arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = (0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         
         ballpos_list.append([])
         trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos)], color = graph_color))
@@ -143,7 +143,6 @@ dt = 0.0001
 scene.waitfor("click")
 scene.bind("click", mouse_method)
 scene.bind("keydown", key_method)
-
 timer.color = color.yellow
 
 while True:

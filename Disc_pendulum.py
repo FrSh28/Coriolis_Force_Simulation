@@ -19,38 +19,42 @@ sleep(5)
 
 gd = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation")
 deviation = gdots(gdisplay = gd, pos = (0, 0), color = color.green, size = 1)
-scale = gdots(gdisplay = gd, pos = [(5, 0), (-1, 0)], color = color.white, size = 0.01)
+scale = gdots(gdisplay = gd, pos = [(-1, 0), (5, 0)], color = color.white, size = 0.01)
 
 gd1 = gdisplay(x = 900, y = 350, width = 350, height = 350, title = "Trail on Disc")
 gplayer = gcurve(gdisplay = gd1, color = color.white)
 gplayer.plot(pos = [(8*cos(radians(angle1)), 8*sin(radians(angle1))) for angle1 in range(360)])
 f1 = gdots(gdisplay = gd1, color = color.red, size = 0.01)
 
-scene = display(width = 900, height = 700, center = (0, 2, 0), background = (0, 0, 0), title = "Pendulum on Disc", lights = [local_light(pos = (0, 30, 0), color = color.gray(0.8))])
+scene = display(width = 900, height = 700, center = (0, 2, 0), background = (0, 0, 0), title = "Pendulum on Disc",
+                lights = [local_light(pos = (0, 30, 0), color = color.gray(0.8))])
 floor = box(pos = (0.0, -0.75, 0.0), length = 20, width = 20, height = 0.5, material = materials.bricks)
 
-timer = label(text = "Click to start", pos = scene.center, opacity = 0, box = False, line = False, yoffset = scene.height/2-100, height = 50, color = color.red)
+timer = label(text = "Click to start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(int(degree*100/6.0)/100.0)
-info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Initial angle:\n    %s  deg"%(rota_demo, str(angle)), pos = scene.center, xoffset = -(scene.width/2-180), height = 18, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
-
+info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Initial angle:\n    %s  deg"%(rota_demo, str(angle)),
+                  pos = scene.center, xoffset = -(scene.width/2-180), height = 18, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
 
 plate = frame(pos = (0, 0, 0))
-disc = cylinder(frame = plate, pos = (0, -0.5, 0), radius = 8, color = color.white, axis = (0, 0.5, 0), material = materials.wood)
-ceiling = cylinder(frame = plate, pos = (0, Length+2, 0), radius = 3, color = color.gray(0.7), axis = (0, 0.2, 0), opacity = 0.7, material = materials.rough)
-sphere(frame = plate, pos = ceiling.pos,  color = ceiling.color, radius = 0.2, opacity = 0.7)
+disc = cylinder(frame = plate, pos = (0, -0.5, 0), radius = 8, axis = (0, 0.5, 0), color = color.white, material = materials.wood)
+ceiling = cylinder(frame = plate, pos = (0, Length+2, 0), radius = 3, axis = (0, 0.2, 0), color = color.gray(0.7), material = materials.rough, opacity = 0.7)
+sphere(frame = plate, pos = ceiling.pos, radius = 0.2, color = ceiling.color, opacity = 0.7)
 ball_init = sphere(frame = plate, pos = (Length * -sin(radians(angle)), ceiling.pos.y - Length * cos(radians(angle)), 0.0), visible = False)
 
-ball = sphere(pos = plate.frame_to_world(ball_init.pos), radius = 0.5, opacity = 0.5, v = vector(0.0, 0.0, 0.0),
-              a = vector(0.0, 0.0, 0.0), make_trail = False, color = color.red, material = materials.rough)
-stick = cylinder(pos = ceiling.pos, radius = 0.1, opacity = 0.5, color = ball.color, axis = ball.pos - ceiling.pos, length = Length, material = materials.rough)
-footage = cylinder(frame = plate, pos = (ball.pos.x, 0.02, ball.pos.z), radius = ball.radius, color = ball.color,
-                   axis = (0, 0.02, 0), opacity = 0.5, material = materials.rough, make_trail = False)
+ball = sphere(pos = plate.frame_to_world(ball_init.pos), radius = 0.5, v = vector(0.0, 0.0, 0.0), a = vector(0.0, 0.0, 0.0),
+              make_trail = False, color = color.red, material = materials.rough, opacity = 0.5)
+stick = cylinder(pos = ceiling.pos, radius = 0.1, length = Length, axis = ball.pos - ceiling.pos, color = ball.color, material = materials.rough, opacity = 0.5)
+footage = cylinder(frame = plate, pos = (ball.pos.x, 0.02, ball.pos.z), radius = ball.radius, axis = (0, 0.02, 0), make_trail = False,
+                   color = ball.color, material = materials.rough, opacity = 0.5)
 
-formula_ball = sphere(frame = plate, pos = ball_init.pos, radius = 0.5, opacity = 0.5, v = vector(0.0, 0.0, 0.0),
-                      a = vector(0.0, 0.0, 0.0), make_trail = False, color = color.blue, material = materials.rough)
-formula_stick = cylinder(frame = plate, pos = ceiling.pos, radius = 0.1, opacity = 0.5, color = formula_ball.color, axis = formula_ball.pos - ceiling.pos, length = Length, material = materials.rough)
-formula_footage = cylinder(frame = plate, pos = (formula_ball.pos.x, 0.02, formula_ball.pos.z), radius = formula_ball.radius, color = formula_ball.color,
-                           axis = (0, 0.02, 0), opacity = 0.5, material = materials.rough, make_trail = False)
+formula_ball = sphere(frame = plate, pos = ball_init.pos, radius = 0.5, v = vector(0.0, 0.0, 0.0), a = vector(0.0, 0.0, 0.0),
+                      make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5)
+formula_stick = cylinder(frame = plate, pos = ceiling.pos, radius = 0.1, length = Length, axis = formula_ball.pos - ceiling.pos, color = formula_ball.color, material = materials.rough, opacity = 0.5)
+formula_footage = cylinder(frame = plate, pos = (formula_ball.pos.x, 0.02, formula_ball.pos.z), radius = formula_ball.radius, axis = (0, 0.02, 0), make_trail = False,
+                           color = formula_ball.color, material = materials.rough, opacity = 0.5)
+
+scene.forward = (-plate.frame_to_world(ball_init.pos).x, -1, -plate.frame_to_world(ball_init.pos).z)
+scene.autoscale = False
 
 def update_all(dt, scene):
     update(dt, scene)
@@ -89,18 +93,13 @@ def key_method(evt):
             rota_demo = str(int(degree*100/6.0)/100.0)
         info_demo.text = "  Rotation Speed(< >):\n    %s  rpm\n  Initial angle:\n    %s  deg"%(rota_demo, str(angle))
 
-scene.autoscale = False
-scene.forward = (-plate.frame_to_world(ball_init.pos).x, -1, -plate.frame_to_world(ball_init.pos).z)
 mode = "outside"
-
-scene.waitfor("click")
-scene.bind("keydown", key_method)
-
 t = 0.0
 dt = 0.002
 
+scene.waitfor("click")
+scene.bind("keydown", key_method)
 timer.color = color.yellow
-timer.text = str(int(t))
 
 while True:
     rate(1/dt)
@@ -120,7 +119,10 @@ while True:
         deviation.plot(pos = (t, abs(plate.world_to_frame(ball.pos) - formula_ball.pos)))
         scale.plot(pos = (-t/6, 0))
         ball.a = g + spring_f(stick.axis, kc, Length) / m
-        formula_ball.a = g + spring_f(formula_stick.axis, kc, Length) / m + (-2*cross(w, formula_ball.v)) + vector(formula_ball.pos.x, 0, formula_ball.pos.z) * dot(w, w)
+        formula_ball.a = (g
+                          + spring_f(formula_stick.axis, kc, Length) / m
+                          + (-2*cross(w, formula_ball.v))
+                          + vector(formula_ball.pos.x, 0, formula_ball.pos.z) * dot(w, w))
         if len(ballpos_list) >= 3 and t >= dott:
             pball.append([int(t), count_v(dt, ballpos_list[-2:]), 0, count_a(dt, ballpos_list[-3:]), 0, count_v(dt, trail[-2:]), 0, count_a(dt, trail[-3:]), 0])
             pball[-1][2] = abs(pball[-1][1])
