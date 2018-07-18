@@ -7,7 +7,7 @@ from func import*
 ###############  相關參數  ###############
 #hr, Km
 degree = 15.0                #每hr.自轉的角度
-w = vector(0,radians(degree),0)
+w = vector(0, radians(degree), 0)
 Er = 6371               #地半徑
 latitude = float(raw_input("latitude : "))             #緯度
 fire_angle = 15         #發射仰角(地平為0)
@@ -25,25 +25,25 @@ sleep(5)
 
 
 gd = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation")
-gdots(gdisplay = gd, pos = [(-0.5, 0), (2 , 0)], size = 1 )
+gdots(gdisplay = gd, pos = [(-0.5, 0), (2, 0)], size = 1 )
 
 gd1 = display(x = 900, y = 350, width = 350, height = 350, center = (0, 0, 0), background = (0, 0, 0), title = "Map", userspin = False)
 def project(lat, lon, z):
-    return (Er*lon, Er*lat, z)
+    return vector(Er*lon, Er*lat, z)
 
-curve(display = gd1, pos = [vector(project(-pi/2, -pi, 0)), vector(project(pi/2, -pi, 0)), vector(project(pi/2, pi, 0)),
-                            vector(project(-pi/2, pi, 0)), vector(project(-pi/2, -pi, 0))], color = (0.8,0.8,0.8), size = 3)
+curve(display = gd1, pos = [project(-pi/2, -pi, 0), project(pi/2, -pi, 0), project(pi/2, pi, 0),
+                            project(-pi/2, pi, 0), project(-pi/2, -pi, 0)], color = color.gray(0.8), size = 3)
 for lat in range(-90, 91, 30):
-    curve(display = gd1, pos = [vector(project(radians(lat), -pi, 0)), vector(project(radians(lat), pi, 0))], color=(0.4,0.4,0.4), size = 1)
-    label(display = gd1, pos = vector(project(radians(lat), -pi*0.9, 0)), text = str(lat), box = False, line = False, opacity = 0)
+    curve(display = gd1, pos = [project(radians(lat), -pi, 0), project(radians(lat), pi, 0)], color = color.gray(0.4), size = 1)
+    label(display = gd1, pos = project(radians(lat), -pi*0.9, 0), text = str(lat), box = False, line = False, opacity = 0)
 for lon in range(-180, 181, 30):
-    curve(display = gd1, pos = [vector(project(pi/2, radians(lon), 0)), vector(project(-pi/2, radians(lon), 0))], color=(0.4,0.4,0.4), size = 1)
+    curve(display = gd1, pos = [project(pi/2, radians(lon), 0), project(-pi/2, radians(lon), 0)], color = color.gray(0.4), size = 1)
 
-label(display = gd1, pos = vector(project(pi/2, -pi, 0))+vector(3500,3000,0), text = "latitude", box = False, line = False, opacity = 0)
-updater = sphere(display = gd1, color = (1,1,1), make_trail = True, retain = 1050, trail_type = "points")
+label(display = gd1, pos = project(pi/2, -pi, 0)+vector(3500, 3000, 0), text = "latitude", box = False, line = False, opacity = 0)
+updater = sphere(display = gd1, color = color.white, make_trail = True, retain = 1050, trail_type = "points")
 updater.trail_object.size = 1
 
-scene = display(width = 900, height = 700, center =(0 ,2 ,0), background = (0, 0, 0), title = "Throw Ball on Earth",
+scene = display(width = 900, height = 700, center = (0, 0, 0), background = (0, 0, 0), title = "Throw Ball on Earth",
                 lights = [distant_light(direction = (0, 1, 0), color = color.gray(0.7)), distant_light(direction = (0, -1, 0), color = color.gray(0.7)),
                           distant_light(direction = (1, 0, 0), color = color.gray(0.7)), distant_light(direction = (-1, 0, 0), color = color.gray(0.7)),
                           distant_light(direction = (0, 0, 1), color = color.gray(0.7)), distant_light(direction = (0, 0, -1), color = color.gray(0.7))])
@@ -54,18 +54,18 @@ scene = display(width = 900, height = 700, center =(0 ,2 ,0), background = (0, 0
 timer = label(text = "Click To Start", pos = scene.center, box = False, line = False, opacity = 0, yoffset = 200, height = 50, color = color.red)
 rota_demo = str(int(degree*100/15.0)/100.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(W S):\n    %s  deg\n  Fire Direction(A D):\n    %s  deg\n  Earth Radius:\n    %s  Km"%(rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er),
-                   pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = (0.8,0.8,0.8), box = False, line = False, opacity = 0.2)
+                   pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
 
-earth = frame(pos = (0.0, 0.0, 0.0))
+earth = frame(pos = (0, 0, 0))
 cylinder(pos = (0, -Er*1.2, 0), radius = 20, axis = (0, 3*Er, 0), color = color.green)
 sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.4)
 player = pyramid(frame = earth, pos = (0, Er * sin(radians(latitude)), Er * cos(radians(latitude))), size = (100, 100, 100), color = color.red)
 player.axis = norm(player.pos)
 fireaxis = arrow(frame = earth, pos = player.pos, shaftwidth = 50, color = color.blue, material = materials.rough)
-fireaxis.axis = rotate(rotate(rotate((1, 0, 0), angle = radians(fire_angle), axis = (0, -1, 0)), angle = radians(fire_dir), axis = (0, 0, 1)), angle = radians(latitude), axis = (-1, 0, 0)) * 500
+fireaxis.axis = rotate(rotate(rotate(vector(1, 0, 0), angle = radians(fire_angle), axis = (0, -1, 0)), angle = radians(fire_dir), axis = (0, 0, 1)), angle = radians(latitude), axis = (-1, 0, 0)) * 500
 track = cylinder(frame = earth, pos = (0, 0, 0), radius = 1.5*Er, length = 1, axis = norm(cross(player.axis, fireaxis.axis)), color = color.gray(0.7), opacity = 0.05)
-update_frame = frame(frame = earth, axis = norm(cross(player.axis, fireaxis.axis)))
-update_dot = sphere(frame = update_frame, pos  = vector(Er,0,0), visible = False)
+update_frame = frame(frame = earth, axis = track.axis)
+update_dot = sphere(frame = update_frame, pos = (Er, 0, 0), visible = False)
 
 scene.forward = -earth.frame_to_world(player.pos)
 scene.autoscale = False
@@ -79,50 +79,47 @@ trails = []
 pball = []
 arrows = []
 formula_arrows = []
-map_trail = []
 
 def mouse_method(evt):
     global balln
     if evt.click == "left":
         balln += 1
-        graph_color = (uniform(0.3,0.6), uniform(0.3,0.6), uniform(0.3,0.6))
+        graph_color = (uniform(0.3, 0.8), uniform(0.3, 0.8), uniform(0.3, 0.8))
         balls.append(sphere(pos = earth.frame_to_world(player.pos), v = count_v(dt, poss) + balls_v * norm(earth.frame_to_world(fireaxis.axis)),
                             radius = 40, color = color.red, material = materials.rough, make_trail = True, opacity = 0.5, tleft = 2.0, num = balln,
-                            deviation = gdots(gdisplay = gd, color = graph_color, size = 1)))
+                            graph_trail = points(display = gd1, color = graph_color, size = 1.5), deviation = gdots(gdisplay = gd, color = graph_color, size = 1)))
         formula_balls.append(sphere(frame = earth, pos = player.pos, v = balls_v * norm(fireaxis.axis), radius = 40, color = color.blue, material = materials.rough, make_trail = False, opacity = 0.5))
         arrows.append(arrow(frame = earth, pos = balls[-1].pos, axis = (0, 0, 0), shaftwidth = 20, color = color.red, opacity = 0.5, material = materials.rough))
         formula_arrows.append(arrow(frame = earth, pos = balls[-1].pos, axis = (0, 0, 0), shaftwidth = 20, color = color.blue, opacity = 0.5, material = materials.rough))
         
         ballpos_list.append([])
-        trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos)], color = (uniform(0,1), uniform(0,1), uniform(0,1))))
-        pball.append([vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0])
-        
-        map_trail.append(points(display = gd1, color = graph_color, size = 1.5))
+        trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos)], color = graph_color))
+        pball.append([balln+1, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0])
 
 def key_method(evt):
     global mode, balln, degree, rota_demo, w, fire_angle, fire_dir
     k = evt.key
     if k == "i":
         mode = "inside"
-        scene.center = timer.pos = info_demo.pos = vector(0,0,0)
+        scene.center = timer.pos = info_demo.pos = vector(0, 0, 0)
     elif k == "o":
         mode = "outside"
-        scene.center = timer.pos = info_demo.pos = vector(0,0,0)
+        scene.center = timer.pos = info_demo.pos = vector(0, 0, 0)
         scene.forward = -earth.frame_to_world(player.pos)
     elif k == "b":
         mode = "ball"
     elif k == "p":
-        for i in range(balln+1):
-            print("\n"+str(i+1)+" \nv: %s    %.5f   \na: %s    %.5f   \nobserver_v: %s    %.5f\nobserver_a: %s    %.5f"
-                    %(pball[i][0], pball[i][1], pball[i][2], pball[i][3], pball[i][4], pball[i][5], pball[i][6], pball[i][7]))
+        for pb in pball:
+            print("\n%d\nv: %s    %.5f   \na: %s    %.5f   \nobserver_v: %s    %.5f\nobserver_a: %s    %.5f"
+                    %(pb[0], pb[1], pb[2], pb[3], pb[4], pb[5], pb[6], pb[7], pb[8]))
     elif k == "left" and len(balls) == 0:
         degree -= 1
         rota_demo = str(int(degree*100/15.0)/100.0)
-        w = vector(0,radians(degree),0)
+        w = vector(0, radians(degree), 0)
     elif k == "right" and len(balls) == 0:
         degree += 1
         rota_demo = str(int(degree*100/15.0)/100.0)
-        w = vector(0,radians(degree),0)
+        w = vector(0, radians(degree), 0)
     elif k == "w" or k == "s" or k == "a" or k == "d":
         if k == "w" and fire_angle < 90:
             fire_angle += 1
@@ -134,10 +131,9 @@ def key_method(evt):
         elif k == "d":
             fire_dir -=1
             fire_dir %= 360
-        fireaxis.axis = rotate(rotate(rotate((1, 0, 0), angle = radians(fire_angle), axis = (0, -1, 0)), angle = radians(fire_dir), axis = (0, 0, 1)), angle = radians(latitude), axis = (-1, 0, 0)) * 500
+        fireaxis.axis = rotate(rotate(rotate(vector(1, 0, 0), angle = radians(fire_angle), axis = (0, -1, 0)), angle = radians(fire_dir), axis = (0, 0, 1)), angle = radians(latitude), axis = (-1, 0, 0)) * 500
         if not fire_angle == 90:
-            track.axis = norm(cross(player.axis, fireaxis.axis))
-            update_frame.axis = norm(cross(player.axis, fireaxis.axis))
+            update_frame.axis = track.axis = norm(cross(player.axis, fireaxis.axis))
     info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(W S):\n    %s  deg\n  Fire Direction(A D):\n    %s  deg\n  Earth Radius:\n    %s  Km"%(rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er)
     
 mode = "outside"
@@ -158,33 +154,33 @@ while True:
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
     
-    tmp_pos = update_frame.frame_to_world(vector(0,cos(t*60)*Er,sin(t*60)*Er))
-    updater_lat = asin(tmp_pos.y/Er)
+    tmp_pos = update_frame.frame_to_world(vector(0, cos(t*60)*Er, sin(t*60)*Er))
+    updater_lat = asin(tmp_pos.y / Er)
     if tmp_pos.z > 0:
-        updater_lon = atan(tmp_pos.x/tmp_pos.z)
+        updater_lon = atan(tmp_pos.x / tmp_pos.z)
     else:
         if tmp_pos.x > 0:
-            updater_lon = pi+atan(tmp_pos.x/tmp_pos.z)
+            updater_lon = pi + atan(tmp_pos.x / tmp_pos.z)
         else:
-            updater_lon = -pi+atan(tmp_pos.x/tmp_pos.z)
-    updater.pos = vector(project(updater_lat, updater_lon, 0.1))
+            updater_lon = -pi + atan(tmp_pos.x / tmp_pos.z)
+    updater.pos = project(updater_lat, updater_lon, 0.1)
 
-    poss[0] = poss[1] * 1
-    poss[1] = earth.frame_to_world(player.pos) * 1
+    poss[0] = poss[1]*1
+    poss[1] = earth.frame_to_world(player.pos)*1
     
     for b in balls:
         ballpos = earth.world_to_frame(b.pos)
-        b.deviation.plot(pos = (2.0-b.tleft , abs(ballpos - formula_balls[balls.index(b)].pos)))
+        b.deviation.plot(pos = (2.0-b.tleft, abs(ballpos - formula_balls[balls.index(b)].pos)))
         
-        updater_lat = asin(ballpos.y/abs(ballpos))
+        updater_lat = asin(ballpos.y / abs(ballpos))
         if ballpos.z > 0:
-            updater_lon = atan(ballpos.x/ballpos.z)
+            updater_lon = atan(ballpos.x / ballpos.z)
         else:
             if ballpos.x > 0:
-                updater_lon = pi+atan(ballpos.x/ballpos.z)
+                updater_lon = pi + atan(ballpos.x / ballpos.z)
             else:
-                updater_lon = -pi+atan(ballpos.x/ballpos.z)
-        map_trail[balls.index(b)].append(vector(project(updater_lat, updater_lon, 0.15)))
+                updater_lon = -pi + atan(ballpos.x / ballpos.z)
+        b.graph_trail.append(project(updater_lat, updater_lon, 0.15))
         
         if b.tleft <= 0 or abs(b.pos) - Er < -0.01:
             b.trail_object.visible = False
@@ -192,32 +188,30 @@ while True:
             formula_balls[balls.index(b)].visible = False
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
-            map_trail[balls.index(b)].visible = False
-            del ballpos_list[balls.index(b)], arrows[balls.index(b)], formula_arrows[balls.index(b)], trails[balls.index(b)], formula_balls[balls.index(b)], map_trail[balls.index(b)], balls[balls.index(b)]
+            del b.deviation, b.graph_trail, trails[balls.index(b)], ballpos_list[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
 
         else:
             b.tleft -= dt
             b.a = gravity(b.pos) * norm(b.pos)
-            ballpos_list[balls.index(b)].append(b.pos * 1)
+            ballpos_list[balls.index(b)].append(b.pos*1)
             trails[balls.index(b)].append(pos = ballpos)
             if len(ballpos_list[balls.index(b)]) >= 3:
-                pball[b.num][0] = count_v(dt, ballpos_list[balls.index(b)][-2:])
-                pball[b.num][1] = abs(pball[b.num][0])
-                pball[b.num][2] = count_a(dt, ballpos_list[balls.index(b)][-3:])
-                pball[b.num][3] = abs(pball[b.num][2])
-                pball[b.num][4] = count_v(dt, [vector(trails[balls.index(b)].pos[-2]), vector(trails[balls.index(b)].pos[-1])])
-                pball[b.num][5] = abs(pball[b.num][4])
-                pball[b.num][6] = (count_a(dt, [vector(trails[balls.index(b)].pos[-3]), vector(trails[balls.index(b)].pos[-2]), vector(trails[balls.index(b)].pos[-1])])
-                                            - vector(b.pos.x,0,b.pos.z) * dot(w , w)
-                                            - gravity(vector(trails[balls.index(b)].pos[-2])) * norm(vector(trails[balls.index(b)].pos[-2])))
-                pball[b.num][7] = abs(pball[b.num][6])
+                pball[b.num][1] = count_v(dt, ballpos_list[balls.index(b)][-2:])
+                pball[b.num][2] = abs(pball[b.num][1])
+                pball[b.num][3] = count_a(dt, ballpos_list[balls.index(b)][-3:])
+                pball[b.num][4] = abs(pball[b.num][3])
+                pball[b.num][5] = vector(count_v(dt, trails[balls.index(b)].pos[-2:]))
+                pball[b.num][6] = abs(pball[b.num][5])
+                pball[b.num][7] = (vector(count_a(dt, trails[balls.index(b)].pos[-3:]))
+                                    - gravity(vector(trails[balls.index(b)].pos[-2])) * norm(vector(trails[balls.index(b)].pos[-2])))
+                pball[b.num][8] = abs(pball[b.num][7])
                 arrows[balls.index(b)].pos = ballpos
-                arrows[balls.index(b)].axis = pball[b.num][6]*0.01
+                arrows[balls.index(b)].axis = pball[b.num][7]*0.03
         
     for fb in formula_balls:
-        fb.a = gravity(fb.pos) * norm(fb.pos) + (-2*cross(w , fb.v)) + vector(fb.pos.x,0,fb.pos.z) * dot(w , w)
+        fb.a = gravity(fb.pos) * norm(fb.pos) + (-2*cross(w, fb.v)) + vector(fb.pos.x, 0, fb.pos.z) * dot(w, w)
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
-        formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos) * norm(fb.pos) - vector(fb.pos.x,0,fb.pos.z) * dot(w , w))*0.01
+        formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos) * norm(fb.pos))*0.03
     
     earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
     update(dt, scene)

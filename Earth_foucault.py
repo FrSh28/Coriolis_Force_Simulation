@@ -6,7 +6,7 @@ from func import*
 ###############  相關參數  ###############
 #hr, km
 degree = 15.0             #每hr.自轉的角度
-w = vector(0,radians(degree),0)
+w = vector(0, radians(degree), 0)
 Er = 6371               #地半徑
 latitude = abs(float(raw_input("latitude : ")))             #緯度
 init_angle = float(raw_input("initial angle(<20 deg) : "))             #初始角度
@@ -27,43 +27,43 @@ sleep(5)
 
 gd = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation")
 deviation = gdots(pos = (0, 0), gdisplay = gd, color = color.green, size = 1)
-scale = gdots(pos = [(-1, 0), (5, 0)], gdisplay = gd, color = color.white, size = 0.01)
+scale = gdots(gdisplay = gd, pos = [(-1, 0), (5, 0)], color = color.white, visible = False, size = 0.01)
 
-gsize = Length*sin(angle)
+gsize = Length * sin(angle)
 gd1 = gdisplay(x = 900, y = 350, width = 350, height = 350, xmax = gsize, xmin = -gsize, ymax = gsize, ymin = -gsize, title = "Trail on Ground: X vs Z")
-f1 = gdots(gdisplay = gd1 , color = color.blue, size = 1)
-gdots(gdisplay = gd1 , pos = (0 , 0) ,size = 1 )
+f1 = gdots(gdisplay = gd1, color = color.red, size = 1)
+gdots(gdisplay = gd1, pos = (0 , 0),size = 1 )
 
-scene = display(width = 900, height = 700, center =(0 ,2 ,0), background = (0, 0, 0), title = "Foucault Pendulum",
+scene = display(width = 900, height = 700, center = (0, 0, 0), background = (0, 0, 0), title = "Foucault Pendulum",
                 lights = [distant_light(direction = (0, 1, 0), color = color.gray(0.7)), distant_light(direction = (0, -1, 0), color = color.gray(0.7)),
-                             distant_light(direction = (1, 0, 0), color = color.gray(0.7)), distant_light(direction = (-1, 0, 0), color = color.gray(0.7)),
-                             distant_light(direction = (0, 0, 1), color = color.gray(0.7)), distant_light(direction = (0, 0, -1), color = color.gray(0.7))])
+                          distant_light(direction = (1, 0, 0), color = color.gray(0.7)), distant_light(direction = (-1, 0, 0), color = color.gray(0.7)),
+                          distant_light(direction = (0, 0, 1), color = color.gray(0.7)), distant_light(direction = (0, 0, -1), color = color.gray(0.7))])
 
-timer = label(text = "Click To Start", pos = scene.center, box = False, line = False, opacity = 0, yoffset = scene.height/2-100, height = 50, color = color.red)
+timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(int(degree*100/15.0)/100.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er),
-                   pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = (0.8,0.8,0.8), box = False, line = False, opacity = 0.2)
+                   pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
 
-earth = frame(pos = (0.0, 0.0, 0.0))
-ground = frame(frame = earth, pos = (-Er*cos(radians(latitude)),Er*sin(radians(latitude)),0))
-floor = box(frame = ground, pos = (0,0,0), length = Length, width = Length, height = 0.2, material = materials.wood)
-ceiling = sphere(frame = ground, pos = (0,Length+0.3,0), color = color.gray(0.3), radius = 0.1, material = materials.rough)
-ball_init = sphere(frame = ground, pos = (Length*-sin(angle),ceiling.pos.y - Length*cos(angle),0), visible = False)
-ground.rotate(angle = radians(90-latitude), axis = (0,0,1))
+earth = frame(pos = (0, 0, 0))
+ground = frame(frame = earth, pos = (Er * -cos(radians(latitude)), Er * sin(radians(latitude)), 0))
+floor = box(frame = ground, pos = (0, 0, 0), length = Length, width = Length, height = 0.2, material = materials.wood)
+ceiling = sphere(frame = ground, pos = (0, Length+0.3, 0), color = color.gray(0.3), radius = 0.1, material = materials.rough)
+ball_init = sphere(frame = ground, pos = (Length * -sin(angle), ceiling.pos.y - Length * cos(angle), 0), visible = False)
+ground.rotate(angle = radians(90-latitude), axis = (0, 0, 1))
 
 ball = sphere(pos = earth.frame_to_world(ground.frame_to_world(ball_init.pos)), radius = 0.15, color = color.red,
-              v = vector(0.0,0.0,0.0), a = vector(0, 0, 0), opacity = 0.5, material = materials.rough, make_trail = False, retain = 50)
+              v = vector(0.0, 0.0, 0.0), a = vector(0.0, 0.0, 0.0), opacity = 0.5, material = materials.rough, make_trail = False)
 stick = cylinder(pos = earth.frame_to_world(ground.frame_to_world(ceiling.pos)), length = Length, radius = 0.05, color = ball.color, opacity = 0.5, material = materials.rough)
 stick.axis = ball.pos - stick.pos
 footage = cylinder(frame = ground, pos = (earth.world_to_frame(ground.world_to_frame(ball.pos)).x, 0.1, earth.world_to_frame(ground.world_to_frame(ball.pos)).z),
-                   radius = ball.radius, color = ball.color, axis = (0.0, 0.001, 0.0), opacity = 0.5, material = materials.rough, make_trail = False, retain = 500)
+                   radius = ball.radius, color = ball.color, axis = (0, 0.001, 0), opacity = 0.5, material = materials.rough, make_trail = False)
 
 formula_ball = sphere(frame = earth, pos = ground.frame_to_world(ball_init.pos), radius = 0.15, color = color.blue,
-                      v = vector(0.0,0.0,0.0), a = vector(0, 0, 0), opacity = 0.5, material = materials.rough, make_trail = False, retain = 50)
+                      v = vector(0.0,0.0,0.0), a = vector(0.0, 0.0, 0.0), opacity = 0.5, material = materials.rough, make_trail = False)
 formula_stick = cylinder(frame = earth, pos = ground.frame_to_world(ceiling.pos), length = Length, radius = 0.05, color = formula_ball.color, opacity = 0.5, material = materials.rough)
 formula_stick.axis = formula_ball.pos - formula_stick.pos
 formula_footage = cylinder(frame = ground, pos = (ground.world_to_frame(formula_ball.pos).x, 0.1, ground.world_to_frame(formula_ball.pos).z),
-                           radius = formula_ball.radius, color = formula_ball.color, axis = (0.0, 0.001, 0.0), opacity = 0.5, material = materials.rough, make_trail = False, retain = 500)
+                           radius = formula_ball.radius, color = formula_ball.color, axis = (0, 0.001, 0), opacity = 0.5, material = materials.rough, make_trail = False)
 
 scene.autoscale = False
 
@@ -91,17 +91,17 @@ def key_method(evt):
         scene.range = (250, 250, 250)
     elif key == "o":
         mode = "outside"
-        scene.center = timer.pos = info_demo.pos = vector(0,0,0)
+        scene.center = timer.pos = info_demo.pos = vector(0, 0, 0)
         scene.forward = -earth.frame_to_world(ground.pos)
         scene.range = (3900, 3900, 3900)
     elif start == False:
         if key == "left":
             degree -= 1
-            w = vector(0,radians(degree),0)
+            w = vector(0, radians(degree), 0)
             rota_demo = str(int(degree*100/15.0)/100.0)
         elif key == "right":
             degree += 1
-            w = vector(0,radians(degree),0)
+            w = vector(0, radians(degree), 0)
             rota_demo = str(int(degree*100/15.0)/100.0)
         info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er)
 
@@ -129,12 +129,12 @@ while True:
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
     
-    poss[0] = poss[1] * 1
-    poss[1] = ball.pos * 1
+    poss[0] = poss[1]*1
+    poss[1] = ball.pos*1
     
     if start:
         t += dt
-        ballpos_list.append(ball.pos * 1)
+        ballpos_list.append(ball.pos*1)
         trail.append(pos = ground.world_to_frame(earth.world_to_frame(ball.pos)))
         f1.plot(pos = (trail.pos[-1][2], trail.pos[-1][0]))
         deviation.plot(pos = (t, abs(earth.world_to_frame(ball.pos) - formula_ball.pos)))
@@ -142,7 +142,7 @@ while True:
         ball.a = gravity(ball.pos) * norm(ball.pos) + spring_f(stick.axis, kc, Length) / m
         formula_ball.a = (gravity(formula_ball.pos) * norm(formula_ball.pos)
                           + spring_f(formula_stick.axis, kc, Length) / m
-                          + (-2*cross(w , formula_ball.v))
+                          + (-2*cross(w, formula_ball.v))
                           + vector(formula_ball.pos.x, 0, formula_ball.pos.z) * dot(w, w))
             
     else:
@@ -150,14 +150,14 @@ while True:
             mous = scene.mouse.getevent()
             if mous.click == "left":
                 start = True
-                ball.make_trail = False
+                ball.make_trail = True
+                ball.retain = 50
                 footage.make_trail = True
-                formula_ball.make_trail = False
-                formula_footage.make_trail = True
-                trail = points(frame = ground, pos = [ground.world_to_frame(earth.world_to_frame(ball.pos))], color = color.blue, size = 1)
-                ball.v = count_v(dt,poss)
+                footage.retain = 500
+                trail = points(frame = ground, pos = [ground.world_to_frame(earth.world_to_frame(ball.pos))], color = color.red, size = 1)
+                ball.v = count_v(dt, poss)
     
-    earth.rotate(angle = radians(degree*dt), axis = (0,1,0))
+    earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
     if not start:
         ball.pos = earth.frame_to_world(ground.frame_to_world(ball_init.pos))
         formula_ball.pos = ground.frame_to_world(ball_init.pos)
