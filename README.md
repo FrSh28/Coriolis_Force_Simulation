@@ -2,7 +2,7 @@
 
 Requirement:
 
-Note:  You have to install Python27 before installing VPython
+Note:  You have to install Python27 before installing VPython6
 
 Python2.7
 
