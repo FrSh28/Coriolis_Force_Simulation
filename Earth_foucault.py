@@ -20,7 +20,7 @@ def gravity(r):
 ########################################
 print "\nUnits: hr , km\n"
 print "Controlings:\n ¡ö : rotation speed down\n ¡÷ : rotation speed up\n i : camera rotates with disc\n o : camera sets still"
-print "\nclick to realse the pendulum\n"
+print "\nclick to release the pendulum\n"
 print "You can't change rotation speed after releasing the pendulum\n"
 sleep(5)
 
