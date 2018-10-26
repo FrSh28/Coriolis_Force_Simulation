@@ -1,0 +1,16 @@
+py ["init"][m][kc][Length]
+py ["start"][w][dt][poss1.x][poss1.y][poss1.z][poss2.x][poss2.y][poss2.z]
+
+py ["c"][count][ball.pos.x][~.y][~.z][stick.pos][~.y][~.z][formula_ball.pos][~.y][~.z][formula_stick.pos][~.y][~.z]
+cpp ["c"][count+1][ball.pos][~.y][~.z][formula_ball.pos][~.y][~.z]
+...
+
+
+def SpringDamp(v, r):
+    cos_theta = dot(v,r)/(mag(v)*mag(r))
+    print(cos_theta)
+    r_unit_vector = norm(r)
+    projection_vector = mag(v) * cos_theta * r_unit_vector
+    spring_damp = - damp * projection_vector
+    return spring_damp
+

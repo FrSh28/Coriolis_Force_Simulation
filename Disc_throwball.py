@@ -1,15 +1,35 @@
-# -*- coding: cp950 -*-
+#-*- coding: cp950 -*-
+'''
+ Copyright (C) 2018 Yi-Fan Shyu, Yueh-Feng Ku
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is furnished
+ to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'''
+
 from visual import*
 from visual.graph import*
 from random import*
 from func import*
 
-###############  相關參數  ###############
-degree = 0.0             #每秒轉動的角度
+degree = 0.0
 w = vector(0, radians(degree), 0)
-throw_dir = 0          #發射方向(右為正)
-balls_v = 7.0             #球速度
-########################################
+throw_dir = 0
+balls_v = 7.0
+
 print "Controlings:\n ← : rotation speed down\n → : rotation speed up\n i : camera rotates with disc\n o : camera sets still\n p : print balls data"
 print "\nclick to throw the ball\n\nYou can't change rotation speed while any ball exists "
 sleep(5)
@@ -156,7 +176,7 @@ while True:
     plate.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
     update(dt, scene)
     
-    if mode == "inside":            #處理視角
+    if mode == "inside":            #糧B簡z繕繪穡瞻
         scene.forward = vector(-plate.frame_to_world(player.pos).x, -2, -plate.frame_to_world(player.pos).z)
 
 

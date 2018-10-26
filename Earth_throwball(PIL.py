@@ -1,23 +1,43 @@
-# -*- coding: cp950 -*-
+#-*- coding: cp950 -*-
+'''
+ Copyright (C) 2018 Yi-Fan Shyu, Yueh-Feng Ku
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is furnished
+ to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'''
+
 from visual import*
 from visual.graph import*
 from random import*
 from func import*
 from PIL import Image
 
-###############  相關參數  ###############
-#hr, Km
-degree = 15.0                #每hr.自轉的角度
+#Units:hr, Km, degree
+degree = 15.0
 w = vector(0, radians(degree), 0)
-Er = 6371               #地半徑
-latitude = float(raw_input("latitude : "))             #緯度
-fire_angle = 15         #發射仰角(地平為0)
-fire_dir = 30          #發射方向(東為0)
-balls_v = 27000.0             #球速度
+Er = 6371
+latitude = float(raw_input("latitude : "))
+fire_angle = 15
+fire_dir = 30
+balls_v = 27000.0
 gn = 9.80665*(Er**2)*(3600**2)*(10**-3)
 def gravity(r):
     return -gn/(abs(r)**2)
-########################################
+
 print "\nUnits: hr , km\n"
 print "Controlings:\n ← : rotation speed down\n → : rotation speed up\n i : camera rotates with earth\n o : camera sets still\n b : camera follows flying balls"
 print " w : throw angle up\n s : throw angle down\n a : throw direction turns left\n d : throw direction turns right\n p : print balls data"
@@ -222,7 +242,7 @@ while True:
     earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
     update(dt, scene)
     
-    if mode == "inside":            #處理視角
+    if mode == "inside":            #糧B簡z繕繪穡瞻
         scene.forward = -earth.frame_to_world(player.pos)
     elif mode == "ball" and len(balls):
         scene.center = timer.pos = info_demo.pos = balls[-1].pos
