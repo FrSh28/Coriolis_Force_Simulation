@@ -26,6 +26,7 @@ from func import*
 from communicate import*
 import subprocess
 
+#Units: sec, cm, degree
 degree = 6.0
 w = vector(0, radians(degree), 0)
 angle = float(raw_input("initial angle(<15 deg) : "))

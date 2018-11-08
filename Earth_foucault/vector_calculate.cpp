@@ -106,6 +106,7 @@ inline vec norm(vec v)
 inline vec gravity(vec v)
 {
 	return norm(v)*-5158707301747.944L/(v.x*v.x + v.y*v.y + v.z*v.z);
+	//(9.80665 * (3600)^2 / 1000) * (6371)^2
 }
 
 inline vec springForce(vec axis, long double k, long double Len)

@@ -26,7 +26,7 @@ from random import*
 from func import*
 from PIL import Image
 
-#Units:hr, Km, degree
+#Units: hr, Km, degree
 degree = 0.26251614     #in radians
 rotate_ratio = 10
 w = vector(0, degree, 0)
