@@ -26,8 +26,9 @@ from communicate import*
 import subprocess
 
 #Units: hr, km, degree
-degree = 15.0
-w = vector(0, radians(degree), 0)
+degree = 0.26251614     #in radians
+rotate_ratio = 10
+w = vector(0, degree, 0)
 Er = 6371
 latitude = abs(float(raw_input("latitude : ")))
 init_angle = float(raw_input("initial angle(<20 deg) : "))
@@ -62,7 +63,7 @@ scene = display(width = 900, height = 700, center = (0, 0, 0), background = (0, 
                           distant_light(direction = (0, 0, 1), color = color.gray(0.7)), distant_light(direction = (0, 0, -1), color = color.gray(0.7))])
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
-rota_demo = str(int(degree*100/15.0)/100.0)
+rota_demo = str(rotate_ratio / 10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er),
                    pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
 
@@ -105,7 +106,7 @@ poss = [ball.pos, ball.pos]
 start = False
 
 def key_method(evt):
-    global mode, degree, w, rota_demo
+    global mode, degree, rotate_ratio, rota_demo, w
     key = evt.key
     if key == "i":
         mode = "inside"
@@ -117,13 +118,13 @@ def key_method(evt):
         scene.range = (3900, 3900, 3900)
     elif start == False:
         if key == "left":
-            degree -= 1
-            w = vector(0, radians(degree), 0)
-            rota_demo = str(int(degree*100/15.0)/100.0)
+            rotate_ratio -= 1
+            w = vector(0, degree * (rotate_ratio / 10.0), 0)
+            rota_demo = str(rotate_ratio / 10.0)
         elif key == "right":
-            degree += 1
-            w = vector(0, radians(degree), 0)
-            rota_demo = str(int(degree*100/15.0)/100.0)
+            rotate_ratio += 1
+            w = vector(0, degree * (rotate_ratio / 10.0), 0)
+            rota_demo = str(rotate_ratio / 10.0)
         info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er)
 
 cylinder(frame = earth, pos = (0, -Er*1.2, 0), radius = 20, axis = (0, 3*Er, 0), color = color.green)
@@ -146,7 +147,7 @@ while True:
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
 
-    earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
+    earth.rotate(angle = degree * (rotate_ratio / 10.0) * dt, axis = (0, 1, 0))
     ball.pos = earth.frame_to_world(ground.frame_to_world(ball_init.pos))
     formula_ball.pos = ground.frame_to_world(ball_init.pos)
     update_all(dt, scene)
@@ -192,7 +193,7 @@ while True:
             break
     ball.pos = vector(float(mess[2]), float(mess[3]), float(mess[4]))
     formula_ball.pos = vector(float(mess[5]), float(mess[6]), float(mess[7]))
-    earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
+    earth.rotate(angle = degree * (rotate_ratio / 10.0) * dt, axis = (0, 1, 0))
     update_all(dt, scene)
     write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
         %(count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z, 

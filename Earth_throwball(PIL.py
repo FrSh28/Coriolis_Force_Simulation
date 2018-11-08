@@ -27,8 +27,9 @@ from func import*
 from PIL import Image
 
 #Units:hr, Km, degree
-degree = 15.0
-w = vector(0, radians(degree), 0)
+degree = 0.26251614     #in radians
+rotate_ratio = 10
+w = vector(0, degree, 0)
 Er = 6371
 latitude = float(raw_input("latitude : "))
 fire_angle = 15
@@ -79,7 +80,7 @@ scene = display(width = 900, height = 700, center = (0, 0, 0), background = (0, 
 [curve(pos = [(x*400, -Er*1.2, 4000), (x*400, -Er*1.2, -4000)], color = color.gray(0.5))for x in range(-10, 11)]
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
-rota_demo = str(int(degree*100/15.0)/100.0)
+rota_demo = str(rotate_ratio / 10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(W S):\n    %s  deg\n  Fire Direction(A D):\n    %s  deg\n  Earth Radius:\n    %s  Km"%(rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er),
                    pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
 
@@ -124,7 +125,7 @@ def mouse_method(evt):
         pball.append([balln+1, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0, vector(0, 0, 0), 0])
 
 def key_method(evt):
-    global mode, degree, rota_demo, w, fire_angle, fire_dir
+    global mode, degree, rotate_ratio, rota_demo, w, fire_angle, fire_dir
     k = evt.key
     if k == "i":
         mode = "inside"
@@ -140,13 +141,13 @@ def key_method(evt):
             print("\n%d\nv: %s    %.5f   \na: %s    %.5f   \nobserver_v: %s    %.5f\nobserver_a: %s    %.5f"
                     %(pb[0], pb[1], pb[2], pb[3], pb[4], pb[5], pb[6], pb[7], pb[8]))
     elif k == "left" and len(balls) == 0:
-        degree -= 1
-        rota_demo = str(int(degree*100/15.0)/100.0)
-        w = vector(0, radians(degree), 0)
+        rotate_ratio -= 1
+        w = vector(0, degree * (rotate_ratio / 10.0), 0)
+        rota_demo = str(rotate_ratio / 10.0)
     elif k == "right" and len(balls) == 0:
-        degree += 1
-        rota_demo = str(int(degree*100/15.0)/100.0)
-        w = vector(0, radians(degree), 0)
+        rotate_ratio += 1
+        w = vector(0, degree * (rotate_ratio / 10.0), 0)
+        rota_demo = str(rotate_ratio / 10.0)
     elif k == "w" or k == "s" or k == "a" or k == "d":
         if k == "w" and fire_angle < 90:
             fire_angle += 1
@@ -239,10 +240,10 @@ while True:
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
         formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos) * norm(fb.pos))*0.03
     
-    earth.rotate(angle = radians(degree * dt), axis = (0, 1, 0))
+    earth.rotate(angle = degree * (rotate_ratio / 10.0) * dt, axis = (0, 1, 0))
     update(dt, scene)
     
-    if mode == "inside":            #³B²zµø¨¤
+    if mode == "inside":
         scene.forward = -earth.frame_to_world(player.pos)
     elif mode == "ball" and len(balls):
         scene.center = timer.pos = info_demo.pos = balls[-1].pos
