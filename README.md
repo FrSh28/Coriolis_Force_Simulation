@@ -17,3 +17,5 @@ Steps:
 4. download any .py file you need, and put it with func.py
 
 5. run .py file
+
+Videos:https://www.youtube.com/playlist?list=PLQyssUoAJlZ8GbiU5gqjExI7gU2_rLlj4
