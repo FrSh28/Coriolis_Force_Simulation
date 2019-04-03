@@ -26,12 +26,12 @@ from random import*
 from func import*
 from PIL import Image
 
-#Units: Km, hr, radian
+#Units: km, hr, radian
 degree = 0.26251614     #Earth's rotation speed
 rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
-latitude = float(raw_input("latitude : "))
+latitude = float(raw_input("latitude : "))  #in degrees
 fire_angle = 15     #in degrees
 fire_dir = 30       #in degrees
 balls_v = 25000.0
@@ -42,8 +42,8 @@ def gravity(r):
 
 print "\nUnits: km, hr\n"
 print "Controlings:\n left , right : change rotation speed\n w : raise throwing angle\n s : lower throwing angle\n a : throwing direction turns left\n d : throwing direction turns right"
-print " i : camera rotates with earth\n o : camera sets still\n b : camera follows flying balls\n p : print balls data"
-print "\nclick to throw the ball\n\nYou can't change rotation speed while any ball exists."
+print " i : camera rotates with Earth\n o : camera sets still\n b : camera follows flying balls\n p : print balls data"
+print "\nclick to throw the ball\n\n*You can't change rotation speed while any ball exists."
 sleep(5)
 
 
@@ -70,13 +70,13 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
                           distant_light(direction = vector(1, 0, 0), color = color.gray(0.7)), distant_light(direction = vector(-1, 0, 0), color = color.gray(0.7)),
                           distant_light(direction = vector(0, 0, 1), color = color.gray(0.7)), distant_light(direction = vector(0, 0, -1), color = color.gray(0.7))])
 
-[curve(pos = [vector(4000, -Er*1.2, z*400), vector(-4000, -Er*1.2, z*400)], color = color.gray(0.5))for z in range(-10, 11)]
-[curve(pos = [vector(x*400, -Er*1.2, 4000), vector(x*400, -Er*1.2, -4000)], color = color.gray(0.5))for x in range(-10, 11)]
+[curve(pos = [vector(4000, -Er*1.2, z*400), vector(-4000, -Er*1.2, z*400)], color = color.gray(0.5)) for z in range(-10, 11)]
+[curve(pos = [vector(x*400, -Er*1.2, 4000), vector(x*400, -Er*1.2, -4000)], color = color.gray(0.5)) for x in range(-10, 11)]
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
-info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(a d):\n    %s  deg\n  Earth Radius:\n    %s  Km"
-                    % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
+info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(a d):\n    %s  deg\n  Earth Radius:\n    %s  km"
+                    % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.5)
 
 earth = frame(pos = vector(0, 0, 0))
 sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.5)
@@ -156,7 +156,7 @@ def key_method(evt):
         fireaxis.axis = rotate(rotate(rotate(vector(1, 0, 0), angle = radians(fire_angle), axis = vector(0, -1, 0)), angle = radians(fire_dir), axis = vector(0, 0, 1)), angle = radians(latitude), axis = vector(-1, 0, 0))
         if not fire_angle == 90:
             update_frame.axis = track.axis = norm(cross(player.axis, fireaxis.axis))
-    info_demo.text = ("  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(s d):\n    %s  deg\n  Earth Radius:\n    %s  Km"
+    info_demo.text = ("  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(s d):\n    %s  deg\n  Earth Radius:\n    %s  km"
                         % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er))
 
 mode = "outside"
@@ -212,7 +212,7 @@ while True:
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
             del b.deviation, b.graph_trail, trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
-
+        
         else:
             b.time += dt
             b.a = gravity(b.pos) * norm(b.pos)

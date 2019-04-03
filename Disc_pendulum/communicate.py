@@ -32,7 +32,7 @@ def readfunc(inbuf, rd):
             m = os.read(rd, 500)
             if m != "":
                 inbuf.put(m)
-    
+
 def writefunc(outbuf, wr):
     while True:
         try:
@@ -40,11 +40,11 @@ def writefunc(outbuf, wr):
             os.write(wr, mess)
         except Queue.Empty:
             pass
-        
+
 def connect():
     rd = os.open(rd_path, os.O_RDONLY)
     wr = os.open(wr_path, os.O_WRONLY)
-
+    
     thr_rd = threading.Thread(target = readfunc, args = (inbuf, rd))
     thr_rd.daemon = True
     thr_rd.start()
@@ -62,6 +62,4 @@ def read():
 def write(mess):
     if mess != "":
         outbuf.put(mess)
-
-
 

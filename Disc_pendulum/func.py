@@ -21,7 +21,6 @@
 
 from visual import*
 
-
 g = vector(0.0, -9.8, 0.0)
 
 def count_v(dt, pos):
@@ -44,3 +43,6 @@ def update(dt, scene):
             i.v += i.a * dt
         if hasattr(i, 'v'):
             i.pos += i.v *dt
+        if hasattr(i, 'S'):
+            i.S += abs(i.v *dt)
+

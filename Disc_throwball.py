@@ -30,7 +30,7 @@ rpm10 = 0       #rpm times 10
 w = vector(0, 2*pi*rpm10/600.0, 0)
 throw_dir = 0   #in degrees
 balls_v = 5.0
-balls_duration = 4.0
+balls_duration = 5.0
 
 print "\nUnits: cm, s\n"
 print "Controlings:\n left , right : change rotation speed\n a : throwing direction turns left\n d : throwing direction turns right"
@@ -43,27 +43,28 @@ g_dev = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation",
 gdots(gdisplay = g_dev, pos = [(-0.5, 0), (balls_duration+0.5, 0), (0, 0.01)], color = color.white, size = 0.01)
 
 g_trail = gdisplay(x = 900, y = 350, width = 350, height = 350, xmax = 10, xmin = -10, ymax = 10, ymin = -10, title = "Trail on Disc")
-gplayer = gcurve(gdisplay = g_trail, color = color.white)
-gplayer.plot(pos = [(7*cos(radians(angle)), 7*sin(radians(angle))) for angle in range(380)])
+gcurve(gdisplay = g_trail, pos = [(10*cos(radians(angle)), 10*sin(radians(angle))) for angle in range(380)], color = color.white)
+gdots(gdisplay = g_trail, pos = (0, -9), color = color.green, size = 8, shape = "square")
+gdots(gdisplay = g_trail, pos = (0, 9), color = color.yellow, size = 8, shape = "square")
 
 scene = display(width = 900, height = 700, center = vector(0, 2, 0), background = color.black, title = "Throw Ball on Disc", autoscale = False,
                 lights = [local_light(pos = vector(0, 20, 0), color = color.gray(0.7))])
-floor = box(pos = vector(0, -0.75, 0), length = 20, width = 20, height = 0.5, material = materials.wood)
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rpm10/10.0)
 throwdir_demo = str(throw_dir)
 info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Throw Direction(a d):\n    %s  deg" % (rota_demo, throwdir_demo),
-                  pos = scene.center, xoffset = -(scene.width/2-200), height = 18, color = color.gray(0.8), box = False, line = False, opacity = 0.2)
+                  pos = scene.center, xoffset = -(scene.width/2-200), height = 18, color = color.white, background = color.black, box = False, line = False, opacity = 0.5)
 
+floor = box(pos = vector(0, -0.75, 0), length = 25, width = 25, height = 0.5, material = materials.bricks)
 plate = frame(pos = vector(0, 0, 0))
-disc = cylinder(frame = plate, pos = vector(0, -0.5, 0), radius = 7, axis = vector(0, 0.5, 0), color = color.gray(0.7), material = materials.rough)
-pyramid(frame = plate, pos = vector(7, 0, 0), size = (0.6, 0.6, 0.6), axis = vector(0, 1, 0), color = color.yellow, material = materials.rough)
-player = sphere(frame = plate, pos = vector(-7, 0, 0), radius = 0.3, color = color.green, material = materials.rough)
-throw = arrow(frame = plate, pos = player.pos, shaftwidth = 0.1, color = color.green, material = materials.rough)
+disc = cylinder(frame = plate, pos = vector(0, -0.5, 0), radius = 10, axis = vector(0, 0.5, 0), color = color.gray(0.7), material = materials.wood)
+pyramid(frame = plate, pos = vector(9, 0, 0), size = (0.6, 0.6, 0.6), axis = vector(0, 1, 0), color = color.yellow, material = materials.rough)
+player = pyramid(frame = plate, pos = vector(-9, 0, 0), size = (0.3, 0.6, 0.6), axis = vector(0, 1, 0), color = color.green, material = materials.rough)
+throw = arrow(frame = plate, pos = vector(-9, 0, 0), shaftwidth = 0.1, color = color.green, material = materials.rough)
 throw.axis = rotate(vector(-player.pos.x, 0, -player.pos.z), angle = radians(throw_dir), axis = vector(0, -1, 0)) * 0.3
 
-scene.forward = vector(-plate.frame_to_world(player.pos).x, -2, -plate.frame_to_world(player.pos).z)
+scene.forward = vector(-plate.frame_to_world(player.pos).x, -3, -plate.frame_to_world(player.pos).z) * 1.5
 scene.autoscale = False
 
 poss = [player.pos, player.pos]
@@ -80,10 +81,10 @@ def mouse_method(evt):
     if evt.click == "left":
         balln += 1
         graph_color = (uniform(0.3, 0.8), uniform(0.3, 0.8), uniform(0.3, 0.8))
-        balls.append(sphere(pos = vector(plate.frame_to_world(player.pos).x, 0, plate.frame_to_world(player.pos).z), radius = 0.3, make_trail = True, color = color.red, material = materials.rough, opacity = 0.5,
+        balls.append(sphere(pos = vector(plate.frame_to_world(player.pos).x, 0.3, plate.frame_to_world(player.pos).z), radius = 0.3, make_trail = True, color = color.red, material = materials.rough, opacity = 0.5,
                             time = 0.0, num = balln, v = count_v(dt, poss) + balls_v * norm(plate.frame_to_world(throw.axis)), a = vector(0, 0, 0), S = 0.0,
                             graph_trail = gcurve(gdisplay = g_trail, color = graph_color, dot = True, size = 5, dot_color = graph_color), deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color)))
-        formula_balls.append(sphere(frame = plate, pos = vector(player.pos.x, 0, player.pos.z), radius = 0.3, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
+        formula_balls.append(sphere(frame = plate, pos = vector(player.pos.x, 0.3, player.pos.z), radius = 0.3, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(throw.axis), a = vector(0, 0, 0)))
         arrows.append(arrow(frame = plate, pos = balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
         formula_arrows.append(arrow(frame = plate, pos = balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
@@ -168,7 +169,7 @@ while True:
             pball[b.num][8] = mag(pball[b.num][7])
             arrows[balls.index(b)].pos = ballpos
             arrows[balls.index(b)].axis = pball[b.num][7] * 0.5
-
+    
     for fb in formula_balls:
         fb.a = -2*cross(w, fb.v) - cross(w, cross(w, fb.pos))
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
@@ -178,5 +179,5 @@ while True:
     update(dt, scene)
     
     if mode == "inside":
-        scene.forward = vector(-plate.frame_to_world(player.pos).x, -2, -plate.frame_to_world(player.pos).z)
+        scene.forward = vector(-plate.frame_to_world(player.pos).x, -3, -plate.frame_to_world(player.pos).z) * 1.5
 

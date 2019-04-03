@@ -43,16 +43,6 @@ bool create()
 	if(wr == INVALID_HANDLE_VALUE && rd == INVALID_HANDLE_VALUE)
 		return false;
 	
-	/*//execute client
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi));
-	if(!CreateProcess(NULL, ClientCommand, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
-	{
-		close(false);
-		return false;
-	}*/
-	
 	//connect to client
 	if(!ConnectNamedPipe(wr, NULL) && GetLastError() != ERROR_PIPE_CONNECTED)
 		close();
@@ -97,13 +87,6 @@ void close(bool ClientStart)
 	CloseHandle(wr);
 	DisconnectNamedPipe(rd);
 	CloseHandle(rd);
-	/*//ends client
-	if(ClientStart)
-	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
-	}*/
 }
 
 void reconnect()
