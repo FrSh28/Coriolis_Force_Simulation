@@ -33,7 +33,7 @@ bool trywrite(char write[])
 	else
 	{
 		close();
-		cout<<"server error "<<GetLastError()<<endl;
+		cout << "server error " << GetLastError() << endl;
 		return false;
 	}
 }
@@ -45,7 +45,7 @@ bool tryread(char read[])
 	else
 	{
 		close();
-		cout<<"client error "<<GetLastError()<<endl;
+		cout << "client error " << GetLastError() << endl;
 		return false;
 	}
 }
@@ -87,24 +87,29 @@ inline vec cross(vec v1, vec v2)
 	return vec((v1.y*v2.z - v1.z*v2.y), (v1.z*v2.x - v1.x*v2.z), (v1.x*v2.y - v1.y*v2.x));
 }
 
-inline vec dot(vec v1, vec v2)
+inline long double dot(vec v1, vec v2)
 {
-	return vec((v1.x*v2.x), (v1.y*v2.y), (v1.z*v2.z));
+	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 }
 
-inline long double abs(vec v)
+inline long double mag(vec v)
 {
 	return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
 inline vec norm(vec v)
 {
-	return v/abs(v);
+	return v / mag(v);
 }
 
 inline vec springForce(vec axis, long double k, long double Len)
 {
-	return norm(axis) * -k * (abs(axis) - Len);
+	return norm(axis) * -k * (mag(axis) - Len);
+}
+
+inline vec damping(vec v, vec r)
+{
+	return norm(r) * dot(v, r) / mag(r) * -50;
 }
 
 int main()
@@ -117,54 +122,54 @@ int main()
 	vec f_ballpos, f_ballv, f_balla, f_stickpos;
 	
 	tryread(mess);
-	ss<<mess;
-	ss>>mess;
+	ss << mess;
+	ss >> mess;
 	if(!strcmp(mess, "init"))
-		ss>>m>>k>>Len>>posy;
+		ss >> m >> k >> Len >> posy;
 	else
 		return 1;
-	ss.str("");ss.clear();
+	ss.str("");	ss.clear();
 	stickpos = vec(0, posy, 0);
 	f_stickpos = vec(0, posy, 0);
 	
 	tryread(mess);
-	ss<<mess;
-	ss>>mess;
+	ss << mess;
+	ss >> mess;
 	if(!strcmp(mess, "start"))
 	{
-		ss>>posy>>dt;
+		ss >> posy >> dt;
 		w = vec(0, posy, 0);
-		ss>>posx>>posy>>posz;
+		ss >> posx >> posy >> posz;
 		ballpos = vec(posx, posy, posz);
-		ss>>posx>>posy>>posz;
+		ss >> posx >> posy >> posz;
 		f_ballpos = vec(posx, posy, posz);
-		ballv = (f_ballpos-ballpos)/dt;
+		ballv = (f_ballpos-ballpos) / dt;
 	}
 	else
 		return 1;
-	ss.str("");ss.clear();
+	ss.str("");	ss.clear();
 	
-	ss<<scientific<<setprecision(18);
+	ss << scientific << setprecision(18);
 	int count = 0;
 	dt = 0.00001L;
 	while(true)
 	{
 		if(!tryread(mess))	break;
-		ss<<mess;
-		ss>>mess;
+		ss << mess;
+		ss >> mess;
 		if(strcmp(mess, "c"))
 			continue;
-		ss>>count;
-		ss>>posx>>posy>>posz;
+		ss >> count;
+		ss >> posx >> posy >> posz;
 		ballpos = vec(posx, posy, posz);
-		ss>>posx>>posy>>posz;
+		ss >> posx >> posy >> posz;
 		f_ballpos = vec(posx, posy, posz);
-		ss.str("");ss.clear();
+		ss.str("");	ss.clear();
 		
 		for(int i = 0 ; i < 1000 ; i++)
 		{
-			balla = g + springForce((ballpos-stickpos), k, Len) / m;
-			f_balla = g + springForce((f_ballpos-f_stickpos), k, Len) / m 
+			balla = g + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
+			f_balla = g + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos))/ m 
 						- cross(w, f_ballv)*2 - cross(w, cross(w, f_ballpos));
 			ballv = ballv + balla * dt;
 			f_ballv = f_ballv + f_balla * dt;
@@ -172,11 +177,11 @@ int main()
 			f_ballpos = f_ballpos + f_ballv * dt;
 		}
 		count++;
-		ss<<'c'<<'$'<<count<<'$'<<ballpos.x<<'$'<<ballpos.y<<'$'<<ballpos.z<<'$'
-			<<f_ballpos.x<<'$'<<f_ballpos.y<<'$'<<f_ballpos.z<<'$';
-		ss>>mess;
+		ss << 'c' << '$' << count << '$' << ballpos.x << '$' << ballpos.y << '$' << ballpos.z << '$'
+			<< f_ballpos.x << '$' << f_ballpos.y << '$' << f_ballpos.z << '$';
+		ss >> mess;
 		while(!trywrite(mess));
-		ss.str("");ss.clear();
+		ss.str("");	ss.clear();
 	}
 	close();
 }
