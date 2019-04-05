@@ -22,12 +22,14 @@
 
 from visual import*
 from visual.graph import*
-from communicate import*
 import subprocess
+from communicate import*
+from func import*
+from output import*
 
 #Units: km, hr, radian
 degree = 0.26251614     #Earth's rotation speed
-rotate_ratio10 = 10     #rotate ratio times 10
+rotate_ratio10 = 0#10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
 latitude = abs(float(raw_input("latitude : ")))  #in degrees
@@ -41,7 +43,7 @@ Length = 10
 amplitude = Length * sin(angle)
 
 print "\nUnits: km, hr\n"
-print "Controlings:\n left , right : change rotation speed\n i : camera rotates with Earth\n o : camera sets still"
+print "Controlings:\n left , right : change rotation speed\n i : camera rotates with Earth\n o : camera sets still\n r : save pendulum data"
 print "\nclick to release the pendulum\n\n*You can't change rotation speed after releasing the pendulum."
 #exe cpp
 subprocess.Popen([str(os.path.dirname(os.path.realpath(__file__)))+"\\vector_calculate.exe"])
@@ -66,13 +68,13 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"
-                            % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.5)
+                            % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.8)
 
 earth = frame(pos = vector(0, 0, 0))
 ground = frame(frame = earth, pos = vector(0, Er * sin(radians(latitude)), Er * cos(radians(latitude))))
 floor = box(frame = ground, pos = vector(0, 0, 0), length = Length, width = Length, height = 0.2, material = materials.wood)
 ceiling = sphere(frame = ground, pos = vector(0, Length+0.3, 0), color = color.gray(0.3), radius = 0.1, material = materials.rough)
-ball_init_pos = vector(Length * sin(angle), ceiling.pos.y - Length * cos(angle), 0)
+ball_init_pos = vector(0, ceiling.pos.y - Length * cos(angle), Length * sin(angle))
 ground.rotate(angle = radians(90-latitude), axis = vector(1, 0, 0))
 
 ball = sphere(pos = earth.frame_to_world(ground.frame_to_world(ball_init_pos)), radius = 0.15, make_trail = False, color = color.red, material = materials.rough, opacity = 0.5,
@@ -81,7 +83,6 @@ stick = cylinder(pos = earth.frame_to_world(ground.frame_to_world(ceiling.pos)),
 stick.axis = ball.pos - stick.pos
 footage = cylinder(frame = ground, pos = vector(earth.world_to_frame(ground.world_to_frame(ball.pos)).x, 0.1, earth.world_to_frame(ground.world_to_frame(ball.pos)).z),
                    radius = ball.radius, axis =   vector(0, 0.001, 0), make_trail = False, color = ball.color, material = materials.rough, opacity = 0.5)
-trail = curve(frame = ground, pos = [ground.world_to_frame(earth.world_to_frame(ball.pos))], color = color.red, size = 1)
 
 formula_ball = sphere(frame = earth, pos = ground.frame_to_world(ball_init_pos), radius = 0.15, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                       v = vector(0, 0, 0), a = vector(0, 0, 0))
@@ -93,7 +94,7 @@ formula_footage = cylinder(frame = ground, pos = vector(ground.world_to_frame(fo
 scene.forward = -earth.frame_to_world(ground.pos)
 scene.autoscale = False
 
-def update_all(dt, scene):
+def update_line(dt, scene):
     stick.pos = earth.frame_to_world(ground.frame_to_world(ceiling.pos))
     stick.axis = ball.pos - stick.pos
     footage.pos.x = ground.world_to_frame(earth.world_to_frame(ball.pos)).x
@@ -105,10 +106,13 @@ def update_all(dt, scene):
     formula_footage.pos.z = ground.world_to_frame(formula_ball.pos).z
 
 poss = [ball.pos, ball.pos]
+ball_pos = []
+trail = []
+data = [["t", "iner_v", "iner_a", "non-iner_v", "non-iner_a"]]
 start = False
 
 def key_method(evt):
-    global mode, degree, rotate_ratio10, rota_demo, w
+    global mode, degree, rotate_ratio10, w, rota_demo
     key = evt.key
     if key == "i":
         mode = "inside"
@@ -118,6 +122,8 @@ def key_method(evt):
         scene.center = timer.pos = info_demo.pos = vector(0, 0, 0)
         scene.forward = -earth.frame_to_world(ground.pos)
         scene.range = vector(3900, 3900, 3900)
+    elif key == "r":
+        save_csv("Earth_foucault.csv", data)
     elif start == False:
         if key == "left":
             rotate_ratio10 -= 1
@@ -151,7 +157,7 @@ while True:
     earth.rotate(angle = mag(w) * dt, axis = norm(w))
     ball.pos = earth.frame_to_world(ground.frame_to_world(ball_init_pos))
     formula_ball.pos = ground.frame_to_world(ball_init_pos)
-    update_all(dt, scene)
+    update_line(dt, scene)
 
     poss[0] = poss[1]*1
     poss[1] = ball.pos*1
@@ -168,13 +174,14 @@ while True:
 start = True
 footage.make_trail = True
 footage.retain = 1000
+ball_pos += [ball.pos*1, ball.pos*1]
+trail += [ground.world_to_frame(earth.world_to_frame(ball.pos)), ground.world_to_frame(earth.world_to_frame(ball.pos))]
 write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0" % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
 write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
         % (count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z,
             formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
 
 dt = 0.001
-n = 0
 
 while True:
     rate(0.1/dt)
@@ -185,7 +192,6 @@ while True:
     
     t += dt
     count += 1
-    n += 1
 
     while True:
         mess = read().split('$')
@@ -194,20 +200,23 @@ while True:
     ball.pos = vector(float(mess[2]), float(mess[3]), float(mess[4]))
     formula_ball.pos = vector(float(mess[5]), float(mess[6]), float(mess[7]))
     earth.rotate(angle = mag(w) * dt, axis = norm(w))
-    update_all(dt, scene)
+    update_line(dt, scene)
     write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
             % (count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z,
                 formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
     
-    trail.append(pos = ground.world_to_frame(earth.world_to_frame(ball.pos)))
-    graph_trail.plot(pos = (trail.pos[-1][2], trail.pos[-1][0]))
+    ball_pos.append(ball.pos*1)
+    trail.append(ground.world_to_frame(earth.world_to_frame(ball.pos)))
+    graph_trail.plot(pos = (trail[-1][0], -trail[-1][2]))
     deviation.plot(pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos) / amplitude))
     scale.plot(pos = (-t/6, 0))
 
-    if not(n % 900):
-        trail = curve(frame = ground, pos = [ground.world_to_frame(earth.world_to_frame(ball.pos))], color = color.red, size = 1)
-        graph_trail = gcurve(gdisplay = g_trail, pos = (trail.pos[-1][2], trail.pos[-1][0]), color = color.red)
+    if not(count % 900):
+        graph_trail = gcurve(gdisplay = g_trail, pos = (trail[-1][0], -trail[-1][2]), color = color.red)
         deviation = gcurve(gdisplay = g_dev, pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos) / amplitude), color = color.green)
+    
+    if not(count % 5):
+        data.append([count/1000.0, count_v(dt, ball_pos[-2:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-2:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
         scene.center = timer.pos = info_demo.pos = earth.frame_to_world(ground.pos)
