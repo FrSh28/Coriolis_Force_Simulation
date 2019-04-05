@@ -72,6 +72,7 @@ poss = [player.pos, player.pos]
 balln = -1
 balls = []
 arrows = []
+balls_pos = []
 trails = []
 formula_balls = []
 formula_arrows = []
@@ -87,6 +88,7 @@ def mouse_method(evt):
                             graph_trail = gcurve(gdisplay = g_trail, color = graph_color, dot = True, size = 5, dot_color = graph_color), deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color),
                             data = [], dotn = 0))
         arrows.append(arrow(frame = plate, pos = balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
+        balls_pos.append([balls[-1].pos*1, balls[-1].pos*1])
         trails.append(curve(frame = plate, pos = [plate.world_to_frame(balls[-1].pos) for i in range(3)], color = graph_color))
 
         formula_balls.append(sphere(frame = plate, pos = vector(player.pos.x, 0.3, player.pos.z), radius = 0.3, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
@@ -161,15 +163,16 @@ while True:
             formula_balls[balls.index(b)].visible = False
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
-            del b.deviation, b.graph_trail, trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
+            del b.deviation, b.graph_trail, balls_pos[balls.index(b)], trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
         
         else:
             b.time += dt
             b.dotn += 1
+            balls_pos[balls.index(b)].append(b.pos*1)
             trails[balls.index(b)].append(pos = ballpos)
             if not(b.dotn % 20):
-                b.data.append([b.v,
-                               b.a,
+                b.data.append([count_v(dt, balls_pos[balls.index(b)][-2:]),
+                               count_a(dt, balls_pos[balls.index(b)][-3:]),
                                vector(count_v(dt, trails[balls.index(b)].pos[-2:])),
                                vector(count_a(dt, trails[balls.index(b)].pos[-3:]))])
             arrows[balls.index(b)].pos = ballpos

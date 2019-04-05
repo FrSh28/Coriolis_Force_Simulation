@@ -98,6 +98,7 @@ poss = [player.pos, player.pos]
 balln = -1
 balls = []
 arrows = []
+balls_pos = []
 trails = []
 formula_balls = []
 formula_arrows = []
@@ -117,6 +118,7 @@ def mouse_method(evt):
         balls[-1].graph_trail.trail_object.color = graph_color
         balls[-1].graph_trail.trail_object.size = 2
         arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
+        balls_pos.append([balls[-1].pos*1, balls[-1].pos*1])
         trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos) for i in range(3)], color = graph_color))
         
         formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
@@ -221,16 +223,17 @@ while True:
             formula_balls[balls.index(b)].visible = False
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
-            del b.deviation, b.graph_trail, trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
+            del b.deviation, b.graph_trail, balls_pos[balls.index(b)], trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
         
         else:
             b.time += dt
             b.dotn += 1
             b.a = gravity(b.pos) * norm(b.pos)
+            balls_pos[balls.index(b)].append(b.pos*1)
             trails[balls.index(b)].append(pos = ballpos)
             if not(b.dotn % 50):
-                b.data.append([b.v,
-                               b.a - gravity(b.pos) * norm(b.pos),
+                b.data.append([count_v(dt, balls_pos[balls.index(b)][-2:]),
+                               count_a(dt, balls_pos[balls.index(b)][-3:]) - gravity(balls_pos[balls.index(b)][-2]) * norm(balls_pos[balls.index(b)][-2]),
                                vector(count_v(dt, trails[balls.index(b)].pos[-2:])),
                                vector(count_a(dt, trails[balls.index(b)].pos[-3:])) - gravity(vector(trails[balls.index(b)].pos[-2])) * norm(vector(trails[balls.index(b)].pos[-2]))])
             arrows[balls.index(b)].pos = ballpos
