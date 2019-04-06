@@ -120,7 +120,7 @@ def mouse_method(evt):
 
         formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(fireaxis.axis), a = vector(0, 0, 0)))
-        formula_arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
+        formula_arrows.append(arrow(frame = earth, pos = formula_balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         balls_data[0] += ["ball "+str(balln+1), "", "", ""]
         balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
         for i in range(501):

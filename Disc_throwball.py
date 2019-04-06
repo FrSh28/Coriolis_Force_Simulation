@@ -93,7 +93,7 @@ def mouse_method(evt):
 
         formula_balls.append(sphere(frame = plate, pos = vector(player.pos.x, 0.3, player.pos.z), radius = 0.3, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(throw.axis), a = vector(0, 0, 0)))
-        formula_arrows.append(arrow(frame = plate, pos = balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
+        formula_arrows.append(arrow(frame = plate, pos = formula_balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         balls_data[0] += ["ball "+str(balln+1), "", "", ""]
         balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
         for i in range(251):
