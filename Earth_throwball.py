@@ -35,7 +35,7 @@ latitude = float(raw_input("latitude : "))  #in degrees
 fire_angle = 15     #in degrees
 fire_dir = 30       #in degrees
 balls_v = 25000.0
-balls_duration = 2
+balls_duration = 2.5
 gn = 9.80665*(Er**2)*(3600**2)*(10**-3)
 def gravity(r):
     return -gn/(mag(r)**2)
@@ -48,7 +48,7 @@ sleep(5)
 
 
 g_dev = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation", xtitle = "t", ytitle = "%")
-gdots(gdisplay = g_dev, pos = [(-0.5, 0), (balls_duration-1, 0), (0, 0.005)], color = color.white, size = 0.01)
+gdots(gdisplay = g_dev, pos = [(-0.25, 0), (balls_duration-1, 0), (0, 0.005)], color = color.white, size = 0.01)
 
 g_trail = display(x = 900, y = 350, width = 350, height = 350, center = vector(0, 0, 0), background = color.black, title = "Map", userspin = False,
                     lights = [distant_light(direction = vector(0, 0, 1)), distant_light(direction = vector(0, 0, -1))])

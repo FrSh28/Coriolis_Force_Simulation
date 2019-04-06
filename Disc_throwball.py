@@ -41,7 +41,7 @@ sleep(5)
 
 
 g_dev = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation", xtitle = "t", ytitle = "%")
-gdots(gdisplay = g_dev, pos = [(-0.5, 0), (balls_duration+0.5, 0), (0, 0.01)], color = color.white, size = 0.01)
+gdots(gdisplay = g_dev, pos = [(-1, 0), (balls_duration+0.5, 0), (0, 0.01)], color = color.white, size = 0.01)
 
 g_trail = gdisplay(x = 900, y = 350, width = 350, height = 350, xmax = 10, xmin = -10, ymax = 10, ymin = -10, title = "Trail on Disc")
 gcurve(gdisplay = g_trail, pos = [(10*cos(radians(angle)), 10*sin(radians(angle))) for angle in range(380)], color = color.white)
