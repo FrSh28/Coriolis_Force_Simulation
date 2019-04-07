@@ -38,7 +38,7 @@ balls_v = 25000.0
 balls_duration = 2.5
 gn = 9.80665*(Er**2)*(3600**2)*(10**-3)
 def gravity(r):
-    return -gn/(mag(r)**2)
+    return -gn/(mag(r)**2) * norm(r)
 
 print "\nUnits: km, hr\n"
 print "Controlings:\n left , right : change rotation speed\n w : raise throwing angle\n s : lower throwing angle\n a : throwing direction turns left\n d : throwing direction turns right"
@@ -80,10 +80,10 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(a d):\n    %s  deg\n  Earth Radius:\n    %s  km"
-                    % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.5)
+                    % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 earth = frame(pos = vector(0, 0, 0))
-sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.5)
+sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.7)
 player = pyramid(frame = earth, pos = vector(0, Er * sin(radians(latitude)), Er * cos(radians(latitude))), color = color.green, size = vector(100, 100, 100), material = materials.rough)
 player.axis = norm(player.pos)
 fireaxis = arrow(frame = earth, pos = player.pos, length = 300, color = color.green, material = materials.rough)
@@ -114,7 +114,7 @@ def mouse_method(evt):
                             graph_trail = sphere(display = g_trail, radius = 300, color = color.white, make_trail = True, trail_type = "points", material = materials.rough),
                             deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color), dev_count = 0,
                             data = [], dotn = 0))
-        balls[-1].a = gravity(balls[-1].pos) * norm(balls[-1].pos)
+        balls[-1].a = gravity(balls[-1].pos)
         balls[-1].graph_trail.trail_object.display = g_trail
         balls[-1].graph_trail.trail_object.color = graph_color
         balls[-1].graph_trail.trail_object.size = 2
@@ -124,8 +124,10 @@ def mouse_method(evt):
         
         formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(fireaxis.axis), a = vector(0, 0, 0)))
-        formula_balls[-1].a = gravity(formula_balls[-1].pos) * norm(formula_balls[-1].pos) - 2*cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
+        formula_balls[-1].a = gravity(formula_balls[-1].pos) - 2*cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
         formula_arrows.append(arrow(frame = earth, pos = formula_balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
+        
+        balls[-1].data.append([balls[-1].v, balls[-1].a, "NO_DATA", "NO_DATA"])
         balls_data[0] += ["ball "+str(balln+1), "", "", ""]
         balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
         for i in range(501):
@@ -219,11 +221,11 @@ while True:
         else:
             b.time += dt
             b.dotn += 1
-            b.a = gravity(b.pos) * norm(b.pos)
+            ballpos = earth.world_to_frame(b.pos)
+            b.a = gravity(b.pos)
             balls_pos[balls.index(b)].append(b.pos*1)
             trails[balls.index(b)].append(pos = ballpos)
             
-                ballpos = earth.world_to_frame(b.pos)
             if b.S:
                 b.deviation.plot(pos = (b.time, mag(ballpos - formula_balls[balls.index(b)].pos)*100 / b.S))
             
@@ -239,17 +241,17 @@ while True:
 
             if not(b.dotn % 50):
                 b.data.append([count_v(dt, balls_pos[balls.index(b)][-2:]),
-                               count_a(dt, balls_pos[balls.index(b)][-3:]) - gravity(balls_pos[balls.index(b)][-2]) * norm(balls_pos[balls.index(b)][-2]),
+                               count_a(dt, balls_pos[balls.index(b)][-3:]) - gravity(balls_pos[balls.index(b)][-2]),
                                vector(count_v(dt, trails[balls.index(b)].pos[-2:])),
-                               vector(count_a(dt, trails[balls.index(b)].pos[-3:])) - gravity(vector(trails[balls.index(b)].pos[-2])) * norm(vector(trails[balls.index(b)].pos[-2]))])
+                               vector(count_a(dt, trails[balls.index(b)].pos[-3:])) - gravity(vector(trails[balls.index(b)].pos[-2]))])
             arrows[balls.index(b)].pos = ballpos
             arrows[balls.index(b)].axis = (vector(count_a(dt, trails[balls.index(b)].pos[-3:]))
-                                            - gravity(vector(trails[balls.index(b)].pos[-2])) * norm(vector(trails[balls.index(b)].pos[-2]))) * 0.03
+                                            - gravity(vector(trails[balls.index(b)].pos[-2]))) * 0.03
     
     for fb in formula_balls:
-        fb.a = gravity(fb.pos) * norm(fb.pos) - 2*cross(w, fb.v) - cross(w, cross(w, fb.pos))
+        fb.a = gravity(fb.pos) - 2*cross(w, fb.v) - cross(w, cross(w, fb.pos))
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
-        formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos) * norm(fb.pos)) * 0.03
+        formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos)) * 0.03
     
     if mode == "inside":
         scene.forward = -earth.frame_to_world(player.pos)

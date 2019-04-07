@@ -118,7 +118,7 @@ int main()
 	char mess[500] = {0};
 	stringstream ss;
 	long double dt = 0, m = 0, k = 0, Len = 0, posx = 0, posy = 0, posz = 0;
-	vec w, ballpos, ballv, balla, stickpos, g(0, -980.665, 0);
+	vec w, ballpos, ballv, balla, stickpos, g;
 	vec f_ballpos, f_ballv, f_balla, f_stickpos;
 	
 	tryread(mess);
@@ -137,8 +137,10 @@ int main()
 	ss >> mess;
 	if(!strcmp(mess, "start"))
 	{
-		ss >> posy >> dt;
+		ss >> posy;
 		w = vec(0, posy, 0);
+		ss >> posy >> dt;
+		g = vec(0, posy, 0);
 		ss >> posx >> posy >> posz;
 		ballpos = vec(posx, posy, posz);
 		ss >> posx >> posy >> posz;

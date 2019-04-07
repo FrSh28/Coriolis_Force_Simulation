@@ -34,6 +34,7 @@ init_angle = 0
 while init_angle <= 0:
     init_angle = float(raw_input("initial angle(<20 deg) : "))   #in degrees
 angle = radians(init_angle)
+g = vector(0, -980.665, 0)
 m = 20.0
 kc = 500000.0
 Length = 50.0
@@ -62,7 +63,7 @@ scene = display(width = 900, height = 700, center = vector(0, 2, 0), background 
 timer = label(text = "Click to start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rpm10/10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Initial angle:\n    %s  deg" % (rota_demo, str(init_angle)),
-                  pos = scene.center, xoffset = -(scene.width/2-180), height = 18, color = color.white, background = color.black, box = False, line = False, opacity = 0.8)
+                  pos = scene.center, xoffset = -(scene.width/2-180), height = 18, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 floor = box(pos = vector(0.0, -0.75, 0.0), length = Length+5, width = Length+5, height = 0.5, material = materials.bricks)
 plate = frame(pos = vector(0, 0, 0))
@@ -158,10 +159,13 @@ ball.make_trail = True
 ball.retain = 1000
 footage.make_trail = True
 footage.retain = 1000
+ball.v = count_v(dt, poss)
+ball.a = g
 ball_pos += [ball.pos*1, ball.pos*1]
 trail += [plate.world_to_frame(ball.pos), plate.world_to_frame(ball.pos)]
-write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
-        % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2], ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
+data.append([count/100.0, ball.v, ball.a, "NO_DATA", "NO_DATA"])
+write("start %.18E %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
+        % (w.y, g.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2], ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
 write("c %d\0" % (count))
 
 dt = 0.01

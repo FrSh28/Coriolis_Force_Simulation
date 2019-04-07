@@ -41,6 +41,9 @@ m = 30.0
 kc = 500000000.0
 Length = 10
 amplitude = Length * sin(angle)
+gn = 9.80665*(Er**2)*(3600**2)*(10**-3)
+def gravity(r):
+    return -gn/(mag(r)**2) * norm(r)
 
 print "\nUnits: km, hr\n"
 print "Controlings:\n left , right : change rotation speed\n i : camera rotates with Earth\n o : camera sets still\n r : save pendulum data"
@@ -68,7 +71,7 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"
-                            % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.8)
+                            % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 earth = frame(pos = vector(0, 0, 0))
 ground = frame(frame = earth, pos = vector(0, Er * sin(radians(latitude)), Er * cos(radians(latitude))))
@@ -174,8 +177,11 @@ while True:
 start = True
 footage.make_trail = True
 footage.retain = 1000
+ball.v = count_v(dt, poss)
+ball.a = gravity(ball.pos)
 ball_pos += [ball.pos*1, ball.pos*1]
 trail += [ground.world_to_frame(earth.world_to_frame(ball.pos)), ground.world_to_frame(earth.world_to_frame(ball.pos))]
+data.append([count/100.0, ball.v, ball.a, "NO_DATA", "NO_DATA"])
 write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0"
          % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
 write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"

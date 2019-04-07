@@ -55,7 +55,7 @@ timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.heigh
 rota_demo = str(rpm10/10.0)
 throwdir_demo = str(throw_dir)
 info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Throw Direction(a d):\n    %s  deg" % (rota_demo, throwdir_demo),
-                  pos = scene.center, xoffset = -(scene.width/2-200), height = 18, color = color.white, background = color.black, box = False, line = False, opacity = 0.5)
+                  pos = scene.center, xoffset = -(scene.width/2-200), height = 18, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 floor = box(pos = vector(0, -0.75, 0), length = 25, width = 25, height = 0.5, material = materials.bricks)
 plate = frame(pos = vector(0, 0, 0))
@@ -95,6 +95,8 @@ def mouse_method(evt):
                                     v = balls_v * norm(throw.axis), a = vector(0, 0, 0)))
         formula_balls[-1].a = -2*cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
         formula_arrows.append(arrow(frame = plate, pos = formula_balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
+
+        balls[-1].data.append([balls[-1].v, balls[-1].a, "NO_DATA", "NO_DATA"])
         balls_data[0] += ["ball "+str(balln+1), "", "", ""]
         balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
         for i in range(251):
