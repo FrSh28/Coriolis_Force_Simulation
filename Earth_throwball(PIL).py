@@ -58,7 +58,7 @@ def project(lat, lon, z):
 im = Image.open("earth_map.png")
 im = im.resize((2048, 2048))
 tex = materials.texture(data = im, mapping = "sign")
-background_map = box(display = g_trail, pos = vector(0, 0, -1), length = 0.01, width = 2*pi*Er, height = 2*pi*Er*0.50340136054, axis = vector(0, 0, 1), material = tex, opacity = 0.8)
+background_map = box(display = g_trail, pos = vector(0, 0, -1), length = 0.01, width = 2*pi*Er, height = 2*pi*Er*0.50340136054, axis = vector(0, 0, 1), material = tex)
 
 label(display = g_trail, text = "latitude", pos = project(pi/2, -pi, 0) + vector(3500, 3000, 0), box = False, line = False, opacity = 0)
 [label(display = g_trail, text = str(lat), pos = project(radians(lat), -pi*0.9, 0), box = False, line = False, opacity = 0) for lat in range(-90, 91, 30)]
