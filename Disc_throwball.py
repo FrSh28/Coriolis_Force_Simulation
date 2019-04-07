@@ -93,6 +93,7 @@ def mouse_method(evt):
 
         formula_balls.append(sphere(frame = plate, pos = vector(player.pos.x, 0.3, player.pos.z), radius = 0.3, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(throw.axis), a = vector(0, 0, 0)))
+        formula_balls[-1].a = -2*cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
         formula_arrows.append(arrow(frame = plate, pos = formula_balls[-1].pos, shaftwidth = 0.2, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         balls_data[0] += ["ball "+str(balln+1), "", "", ""]
         balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
@@ -148,6 +149,9 @@ while True:
     poss[0] = poss[1]*1
     poss[1] = plate.frame_to_world(player.pos)*1
     
+    plate.rotate(angle = mag(w) * dt, axis = norm(w))
+    update(dt, scene)
+    
     for b in balls:
         ballpos = plate.world_to_frame(b.pos)
         b.graph_trail.plot(pos = (ballpos.z, ballpos.x))
@@ -182,9 +186,6 @@ while True:
         fb.a = -2*cross(w, fb.v) - cross(w, cross(w, fb.pos))
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
         formula_arrows[formula_balls.index(fb)].axis = fb.a * 0.5
-    
-    plate.rotate(angle = mag(w) * dt, axis = norm(w))
-    update(dt, scene)
     
     if mode == "inside":
         scene.forward = vector(-plate.frame_to_world(player.pos).x, -3, -plate.frame_to_world(player.pos).z) * 1.5

@@ -160,9 +160,9 @@ footage.make_trail = True
 footage.retain = 1000
 ball_pos += [ball.pos*1, ball.pos*1]
 trail += [plate.world_to_frame(ball.pos), plate.world_to_frame(ball.pos)]
-write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0" % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
-write("c %d %.18E %.18E %.18E %.18E %.18E %.18E\0"
-        % (count, ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
+write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
+        % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2], ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
+write("c %d\0" % (count))
 
 dt = 0.01
 
@@ -184,8 +184,7 @@ while True:
     formula_ball.pos = vector(float(mess[5]), float(mess[6]), float(mess[7]))
     plate.rotate(angle = mag(w) * dt, axis = norm(w))
     update_line(dt, scene)
-    write("c %d %.18E %.18E %.18E %.18E %.18E %.18E\0"
-            % (count, ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
+    write("c %d\0" % (count))
 
     ball_pos.append(ball.pos*1)
     trail.append(plate.world_to_frame(ball.pos))

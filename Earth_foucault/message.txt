@@ -1,5 +1,5 @@
 py ["init"][m][kc][Length]
-py ["start"][w][dt][poss1.x][poss1.y][poss1.z][poss2.x][poss2.y][poss2.z]
+py ["start"][w.y][dt][poss1.x][~.y][~.z][poss2.x][~.y][~.z]
 
 py ["c"][count][ball.pos.x][~.y][~.z][stick.pos.x][~.y][~.z][formula_ball.pos.x][~.y][~.z][formula_stick.pos.x][~.y][~.z]
 cpp ["c"]$[count+1]$[ball.pos.x]$[~.y]$[~.z]$[formula_ball.pos.x]$[~.y]$[~.z]

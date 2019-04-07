@@ -29,7 +29,7 @@ from output import*
 
 #Units: km, hr, radian
 degree = 0.26251614     #Earth's rotation speed
-rotate_ratio10 = 0#10     #rotate ratio times 10
+rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
 latitude = abs(float(raw_input("latitude : ")))  #in degrees
@@ -176,7 +176,8 @@ footage.make_trail = True
 footage.retain = 1000
 ball_pos += [ball.pos*1, ball.pos*1]
 trail += [ground.world_to_frame(earth.world_to_frame(ball.pos)), ground.world_to_frame(earth.world_to_frame(ball.pos))]
-write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0" % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
+write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0"
+         % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
 write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
         % (count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z,
             formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
@@ -219,6 +220,6 @@ while True:
         data.append([count/1000.0, count_v(dt, ball_pos[-2:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-2:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
-        scene.center = timer.pos = info_demo.pos = earth.frame_to_world(ground.pos)
+        scene.center = timer.pos = info_demo.pos = earth.frame_to_world(ground.pos+vector(0,0.3,0))
         scene.forward = rotate(-stick.pos, angle = radians(60), axis = cross(-stick.pos, scene.up))
 

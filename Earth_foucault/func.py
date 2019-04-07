@@ -35,14 +35,14 @@ def get_g(mass, G = g):
     return mass * G
 
 def spring_f(length, k, initlen = 0.0):
-    return -norm(length) * k * (abs(length) - abs(initlen))
+    return -norm(length) * k * (mag(length) - mag(initlen))
 
 def update(dt, scene):
     for i in scene.objects:
-        if hasattr(i, 'a'):
-            i.v += i.a * dt
-        if hasattr(i, 'v'):
+        if hasattr(i, 'v') and hasattr(i, 'pos'):
             i.pos += i.v *dt
-        if hasattr(i, 'S'):
-            i.S += abs(i.v *dt)
+        if hasattr(i, 'v') and hasattr(i, 'S'):
+            i.S += mag(i.v *dt)
+        if hasattr(i, 'a') and hasattr(i, 'v'):
+            i.v += i.a * dt
 
