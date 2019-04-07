@@ -121,7 +121,7 @@ def mouse_method(evt):
 
         formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(fireaxis.axis), a = vector(0, 0, 0)))
-        formula_balls[-1].a = gravity(formula_balls[-1].pos) - 2*cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
+        formula_balls[-1].a = gravity(formula_balls[-1].pos) - 2 * cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
         formula_arrows.append(arrow(frame = earth, pos = formula_balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         
         balls[-1].data.append([balls[-1].v, balls[-1].a, "NO_DATA", "NO_DATA"])
@@ -200,9 +200,6 @@ while True:
     poss[0] = poss[1]*1
     poss[1] = earth.frame_to_world(player.pos)*1
     
-    earth.rotate(angle = mag(w) * dt, axis = norm(w))
-    update(dt, scene)
-    
     for b in balls:
         if b.time >= balls_duration or mag(b.pos) - Er <= -0.01:
             for i in range(len(b.data)):
@@ -246,9 +243,12 @@ while True:
                                             - gravity(vector(trails[balls.index(b)].pos[-2]))) * 0.03
     
     for fb in formula_balls:
-        fb.a = gravity(fb.pos) - 2*cross(w, fb.v) - cross(w, cross(w, fb.pos))
+        fb.a = gravity(fb.pos) - 2 * cross(w, fb.v) - cross(w, cross(w, fb.pos))
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
         formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos)) * 0.03
+    
+    earth.rotate(angle = mag(w) * dt, axis = norm(w))
+    update(dt, scene)
     
     if mode == "inside":
         scene.forward = -earth.frame_to_world(player.pos)
