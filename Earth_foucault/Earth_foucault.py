@@ -215,12 +215,12 @@ while True:
     ball_pos.append(ball.pos*1)
     trail.append(ground.world_to_frame(earth.world_to_frame(ball.pos)))
     graph_trail.plot(pos = (trail[-1][0], -trail[-1][2]))
-    deviation.plot(pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos) / amplitude))
+    deviation.plot(pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude))
     scale.plot(pos = (-t/6, 0))
 
     if not(count % 900):
         graph_trail = gcurve(gdisplay = g_trail, pos = (trail[-1][0], -trail[-1][2]), color = color.red)
-        deviation = gcurve(gdisplay = g_dev, pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos) / amplitude), color = color.green)
+        deviation = gcurve(gdisplay = g_dev, pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude), color = color.green)
     
     if not(count % 5):
         data.append([count/1000.0, count_v(dt, ball_pos[-2:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-2:]), count_a(dt, trail[-3:])])
