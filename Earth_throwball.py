@@ -32,6 +32,10 @@ rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
 latitude = float(raw_input("latitude : "))  #in degrees
+if latitude >= 0:
+    str_latitude = str(latitude) + " N"
+else:
+    str_latitude = str(-latitude) + " S"
 fire_angle = 15     #in degrees
 fire_dir = 30       #in degrees
 balls_v = 25000.0
@@ -79,8 +83,8 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
-info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(a d):\n    %s  deg\n  Earth Radius:\n    %s  km"
-                    % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
+info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(a d):\n    %s  deg\n  Earth Radius:\n    %s  km"
+                    % (rota_demo, str_latitude, str(fire_angle), str(fire_dir), str(Er)), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 earth = frame(pos = vector(0, 0, 0))
 sphere(frame = earth, radius = Er, material = materials.earth, opacity = 0.7)
@@ -169,8 +173,8 @@ def key_method(evt):
         fireaxis.axis = rotate(rotate(rotate(vector(1, 0, 0), angle = radians(fire_angle), axis = vector(0, -1, 0)), angle = radians(fire_dir), axis = vector(0, 0, 1)), angle = radians(latitude), axis = vector(-1, 0, 0)) * 300
         if not fire_angle == 90:
             update_frame.axis = track.axis = norm(cross(player.axis, fireaxis.axis))
-    info_demo.text = ("  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(s d):\n    %s  deg\n  Earth Radius:\n    %s  km"
-                        % (rota_demo, str(latitude), str(fire_angle), str(fire_dir), Er))
+    info_demo.text = ("  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Fire Angle(w s):\n    %s  deg\n  Fire Direction(s d):\n    %s  deg\n  Earth Radius:\n    %s  km"
+                        % (rota_demo, str_latitude, str(fire_angle), str(fire_dir), Er))
 
 mode = "outside"
 t = 0
