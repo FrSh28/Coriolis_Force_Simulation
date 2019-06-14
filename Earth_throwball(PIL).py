@@ -111,12 +111,11 @@ def mouse_method(evt):
         graph_color = vector(uniform(0.3, 0.8), uniform(0.0, 0.5), uniform(0.3, 0.8))
         balls.append(sphere(pos = earth.frame_to_world(player.pos), radius = 40, make_trail = True, color = color.red, material = materials.rough, opacity = 0.5,
                             time = 0.0, num = balln, v = count_v(dt, poss) + balls_v * norm(earth.frame_to_world(fireaxis.axis)), a = vector(0, 0, 0), S = 0.0,
-                            graph_trail = sphere(display = g_trail, radius = 300, color = color.white, make_trail = True, trail_type = "points", material = materials.rough),
+                            graph_trail = sphere(display = g_trail, radius = 300, color = graph_color, make_trail = True, trail_type = "points", material = materials.plastic),
                             deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color), dev_count = 0,
                             data = [], dotn = 0))
         balls[-1].a = gravity(balls[-1].pos)
         balls[-1].graph_trail.trail_object.display = g_trail
-        balls[-1].graph_trail.trail_object.color = graph_color
         balls[-1].graph_trail.trail_object.size = 2
         arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
         balls_pos.append([balls[-1].pos*1, balls[-1].pos*1])
@@ -210,6 +209,7 @@ while True:
                     balls_data[i+2][j+b.num*4+1] = b.data[i][j]
             b.trail_object.visible = False
             b.visible = False
+            b.graph_trail.visible = False
             formula_balls[balls.index(b)].visible = False
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
