@@ -69,7 +69,8 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
-info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"
+latitude_str = str(latitude) + " N"
+info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"
                             % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 earth = frame(pos = vector(0, 0, 0))
