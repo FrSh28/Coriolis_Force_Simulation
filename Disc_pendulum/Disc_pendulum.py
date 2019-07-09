@@ -39,6 +39,7 @@ kc = 500000.0
 Length = 50.0
 amplitude = Length * sin(angle)
 
+print "\nUnits: cm, s\n"
 print "\nControlings:\n left , right : change rotation speed\n i : camera rotates with disc\n o : camera sets still\n r : save pendulum data"
 print "\nclick to release the pendulum\n\n*You can't change rotation speed after releasing the pendulum."
 #exe cpp
@@ -128,6 +129,10 @@ dt = 0.001
 count = 0
 
 scene.waitfor("click")
+while scene.mouse.events:
+    scene.mouse.getevent()
+while scene.kb.keys:
+    scene.kb.getkey()
 scene.bind("keydown", key_method)
 timer.color = color.yellow
 timer.text = str(int(t))

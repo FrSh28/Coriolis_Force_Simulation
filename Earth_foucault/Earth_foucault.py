@@ -148,6 +148,10 @@ dt = 0.0001
 count = 0
 
 scene.waitfor("click")
+while scene.mouse.events:
+    scene.mouse.getevent()
+while scene.kb.keys:
+    scene.kb.getkey()
 scene.bind("keydown", key_method)
 timer.color = color.yellow
 timer.text = str(int(t*10)/10.0) + " hr"

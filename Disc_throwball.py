@@ -135,6 +135,10 @@ t = 0
 dt = 0.001
 
 scene.waitfor("click")
+while scene.mouse.events:
+    scene.mouse.getevent()
+while scene.kb.keys:
+    scene.kb.getkey()
 scene.bind("click", mouse_method)
 scene.bind("keydown", key_method)
 timer.color = color.yellow
