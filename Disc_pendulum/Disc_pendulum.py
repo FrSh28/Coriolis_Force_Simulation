@@ -97,10 +97,9 @@ def update_line(dt, scene):
     formula_footage.pos.x = formula_ball.pos.x
     formula_footage.pos.z = formula_ball.pos.z
 
-poss = [ball.pos, ball.pos]
 ball_pos = []
 trail = []
-data = [["t", "iner_v", "iner_a", "non-iner_v", "non-iner_a"]]
+data = [["t", "iner_pos", "iner_v", "iner_a", "non-iner_pos", "non-iner_v", "non-iner_a"]]
 start = False
 
 def key_method(evt):
@@ -147,9 +146,6 @@ while True:
     formula_ball.pos = ball_init_pos
     update_line(dt, scene)
 
-    poss[0] = poss[1]*1
-    poss[1] = ball.pos*1
-
     if scene.mouse.events:
         mous = scene.mouse.getevent()
         if mous.click == "left":
@@ -163,26 +159,25 @@ ball.make_trail = True
 ball.retain = 1000
 footage.make_trail = True
 footage.retain = 1000
-ball.v = count_v(dt, poss)
+ball.v = cross(w, ball.pos)
 ball.a = g
-ball_pos += [ball.pos*1, ball.pos*1]
+ball_pos += [ball.pos*1]
 trail += [plate.world_to_frame(ball.pos), plate.world_to_frame(ball.pos)]
-data.append([count/100.0, ball.v, ball.a, "NO_DATA", "NO_DATA"])
-write("start %.18E %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
-        % (w.y, g.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2], ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
+data.append([count/100.0, ball.pos, ball.v, ball.a, vector(trail[-1]), "NO_DATA", "NO_DATA"])
+write("start %.18E %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0"
+        % (w.y, g.y, dt, ball.pos.x, ball.pos.y, ball.pos.z, formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
 write("c %d\0" % (count))
 
 dt = 0.01
 
 while True:
     rate(1/dt)
-    
+
+    t += dt
+    count += 1
     timer.text = str(int(t))
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
-    
-    t += dt
-    count += 1
 
     while True:
         mess = read().split('$')
@@ -204,8 +199,8 @@ while True:
         graph_trail = gcurve(gdisplay = g_trail, pos = (footage.x, -footage.z), color = color.red)
         deviation = gcurve(gdisplay = g_dev, pos = (t, mag(plate.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude), color = color.green)
 
-    if not(count % 5):
-        data.append([count/100.0, count_v(dt, ball_pos[-2:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-2:]), count_a(dt, trail[-3:])])
+    if count > 1 and not((count-1) % 5):
+        data.append([count/100.0, ball_pos[-1], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), vector(trail[-1]), count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
         scene.forward = -plate.frame_to_world(forward)

@@ -39,7 +39,7 @@ else:
 fire_angle = 15     #in degrees
 fire_dir = 30       #in degrees
 balls_v = 25000.0
-balls_duration = 2.5
+balls_duration = 2.5001
 gn = 9.80665*(Er**2)*(3600**2)*(10**-3)
 def gravity(r):
     return -gn/(mag(r)**2) * norm(r)
@@ -98,7 +98,6 @@ poss = [player.pos, player.pos]
 balln = -1
 balls = []
 arrows = []
-balls_pos = []
 trails = []
 formula_balls = []
 formula_arrows = []
@@ -110,27 +109,26 @@ def mouse_method(evt):
         balln += 1
         graph_color = vector(uniform(0.3, 0.8), uniform(0.0, 0.5), uniform(0.3, 0.8))
         balls.append(sphere(pos = earth.frame_to_world(player.pos), radius = 40, make_trail = True, color = color.red, material = materials.rough, opacity = 0.5,
-                            time = 0.0, num = balln, v = count_v(dt, poss) + balls_v * norm(earth.frame_to_world(fireaxis.axis)), a = vector(0, 0, 0), S = 0.0,
+                            time = 0.0, num = balln, v = cross(w, earth.frame_to_world(player.pos)) + balls_v * norm(earth.frame_to_world(fireaxis.axis)), a = vector(0, 0, 0), S = 0.0,
                             graph_trail = sphere(display = g_trail, radius = 300, color = graph_color, make_trail = True, trail_type = "points", material = materials.plastic),
                             deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color), dev_count = 0,
-                            data = [], dotn = 0))
+                            data = [], dotn = 0, last_pos = earth.frame_to_world(player.pos)))
         balls[-1].a = gravity(balls[-1].pos)
         balls[-1].graph_trail.trail_object.display = g_trail
         balls[-1].graph_trail.trail_object.size = 2
         arrows.append(arrow(frame = earth, pos = balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.red, material = materials.rough, opacity = 0.5))
-        balls_pos.append([balls[-1].pos*1, balls[-1].pos*1])
-        trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos) for i in range(3)], color = graph_color))
+        trails.append(curve(frame = earth, pos = [earth.world_to_frame(balls[-1].pos), earth.world_to_frame(balls[-1].pos)], color = graph_color))
 
         formula_balls.append(sphere(frame = earth, pos = player.pos, radius = 40, make_trail = False, color = color.blue, material = materials.rough, opacity = 0.5,
                                     v = balls_v * norm(fireaxis.axis), a = vector(0, 0, 0)))
         formula_balls[-1].a = gravity(formula_balls[-1].pos) - 2 * cross(w, formula_balls[-1].v) - cross(w, cross(w, formula_balls[-1].pos))
         formula_arrows.append(arrow(frame = earth, pos = formula_balls[-1].pos, shaftwidth = 20, axis = vector(0, 0, 0), color = color.blue, material = materials.rough, opacity = 0.5))
         
-        balls[-1].data.append([balls[-1].v, balls[-1].a, "NO_DATA", "NO_DATA"])
-        balls_data[0] += ["ball "+str(balln+1), "", "", ""]
-        balls_data[1] += ["iner_v", "iner_a", "non-iner_v", "non-iner_a"]
+        balls[-1].data.append([balls[-1].pos, balls[-1].v, balls[-1].a, vector(trails[balls.index(balls[-1])].pos[-1]), "NO_DATA", "NO_DATA"])
+        balls_data[0] += ["ball "+str(balln+1), "", "", "", "", ""]
+        balls_data[1] += ["iner_pos", "iner_v", "iner_a(no gravity)", "non-iner_pos", "non-iner_v", "non-iner_a(no gravity)"]
         for i in range(501):
-            balls_data[i+2] += [None, None, None, None]
+            balls_data[i+2] += [None, None, None, None, None, None]
 
 def key_method(evt):
     global mode, balls_data, degree, rotate_ratio10, w, rota_demo, fire_angle, fire_dir
@@ -191,6 +189,9 @@ while True:
     timer.text = str(int(t*10)/10.0)+" hr"
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
+
+    earth.rotate(angle = mag(w) * dt, axis = norm(w))
+    update(dt, scene)
     
     tmp_pos = update_frame.frame_to_world(vector(0, sin(-t*60)*Er, cos(-t*60)*Er))
     updater_lat = asin(tmp_pos.y/Er)
@@ -207,24 +208,23 @@ while True:
     poss[1] = earth.frame_to_world(player.pos)*1
     
     for b in balls:
-        if b.time >= balls_duration or mag(b.pos) - Er <= -0.01:
+        if b.time > balls_duration or mag(b.pos) - Er <= -0.01:
             for i in range(len(b.data)):
-                for j in range(4):
-                    balls_data[i+2][j+b.num*4+1] = b.data[i][j]
+                for j in range(6):
+                    balls_data[i+2][j+b.num*6+1] = b.data[i][j]
             b.trail_object.visible = False
             b.visible = False
             b.graph_trail.visible = False
             formula_balls[balls.index(b)].visible = False
             arrows[balls.index(b)].visible = False
             formula_arrows[balls.index(b)].visible = False
-            del b.deviation, b.graph_trail, balls_pos[balls.index(b)], trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
+            del b.deviation, b.graph_trail, trails[balls.index(b)], formula_arrows[balls.index(b)], formula_balls[balls.index(b)], arrows[balls.index(b)], balls[balls.index(b)]
         
         else:
             b.time += dt
             b.dotn += 1
             ballpos = earth.world_to_frame(b.pos)
             b.a = gravity(b.pos)
-            balls_pos[balls.index(b)].append(b.pos*1)
             trails[balls.index(b)].append(pos = ballpos)
 
             if b.S:
@@ -240,11 +240,12 @@ while True:
                     updater_lon = -pi + atan(ballpos.x/ballpos.z)
             b.graph_trail.pos = project(updater_lat, updater_lon, 1)
             
-            if not(b.dotn % 50):
-                b.data.append([count_v(dt, balls_pos[balls.index(b)][-2:]),
-                               count_a(dt, balls_pos[balls.index(b)][-3:]) - gravity(balls_pos[balls.index(b)][-2]),
-                               vector(count_v(dt, trails[balls.index(b)].pos[-2:])),
+            if b.dotn > 1 and not((b.dotn-1) % 50):
+                b.data.append([b.pos, b.v, b.a - gravity(b.last_pos),
+                               vector(trails[balls.index(b)].pos[-2]),
+                               vector(count_v(dt, trails[balls.index(b)].pos[-3:])),
                                vector(count_a(dt, trails[balls.index(b)].pos[-3:])) - gravity(vector(trails[balls.index(b)].pos[-2]))])
+            b.last_pos = b.pos*1
             arrows[balls.index(b)].pos = ballpos
             arrows[balls.index(b)].axis = (vector(count_a(dt, trails[balls.index(b)].pos[-3:]))
                                             - gravity(vector(trails[balls.index(b)].pos[-2]))) * 0.03
@@ -253,9 +254,6 @@ while True:
         fb.a = gravity(fb.pos) - 2 * cross(w, fb.v) - cross(w, cross(w, fb.pos))
         formula_arrows[formula_balls.index(fb)].pos = fb.pos
         formula_arrows[formula_balls.index(fb)].axis = (fb.a - gravity(fb.pos)) * 0.03
-    
-    earth.rotate(angle = mag(w) * dt, axis = norm(w))
-    update(dt, scene)
     
     if mode == "inside":
         scene.forward = -earth.frame_to_world(player.pos)

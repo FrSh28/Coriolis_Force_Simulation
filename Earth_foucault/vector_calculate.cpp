@@ -146,9 +146,9 @@ int main()
 		w = vec(0, posy, 0);
 		ss >> posx >> posy >> posz;
 		ballpos = vec(posx, posy, posz);
+		ballv = cross(w, ballpos);
 		ss >> posx >> posy >> posz;
-		f_ballpos = vec(posx, posy, posz);
-		ballv = (f_ballpos-ballpos) / dt;
+		f_stickpos = vec(posx, posy, posz);
 	}
 	else
 		return 1;
@@ -171,20 +171,21 @@ int main()
 		stickpos = vec(posx, posy, posz);
 		ss >> posx >> posy >> posz;
 		f_ballpos = vec(posx, posy, posz);
-		ss >> posx >> posy >> posz;
-		f_stickpos = vec(posx, posy, posz);
 		ss.str("");	ss.clear();
+		balla = gravity(ballpos) + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
+		f_balla = gravity(f_ballpos) + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos))/ m 
+					- cross(w, f_ballv) * 2 - cross(w, cross(w, f_ballpos));
 		
 		for(int i = 0 ; i < 1000 ; i++)
 		{
-			balla = gravity(ballpos) + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
-			f_balla = gravity(f_ballpos) + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos))/ m 
-						- cross(w, f_ballv) * 2 - cross(w, cross(w, f_ballpos));
 			ballv = ballv + balla * dt;
 			f_ballv = f_ballv + f_balla * dt;
 			ballpos = ballpos + ballv * dt;
 			f_ballpos = f_ballpos + f_ballv * dt;
 			stickpos = stickpos + cross(w, stickpos) * dt;
+			balla = gravity(ballpos) + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
+			f_balla = gravity(f_ballpos) + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos))/ m 
+						- cross(w, f_ballv) * 2 - cross(w, cross(w, f_ballpos));
 		}
 		count++;
 		ss << 'c' << '$' << count << '$' << ballpos.x << '$' << ballpos.y << '$' << ballpos.z << '$'

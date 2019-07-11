@@ -104,14 +104,14 @@ def update_line(dt, scene):
     footage.pos.z = ground.world_to_frame(earth.world_to_frame(ball.pos)).z
 
     formula_stick.pos = ground.frame_to_world(ceiling.pos)
+    print formula_stick.pos
     formula_stick.axis = formula_ball.pos - formula_stick.pos
     formula_footage.pos.x = ground.world_to_frame(formula_ball.pos).x
     formula_footage.pos.z = ground.world_to_frame(formula_ball.pos).z
 
-poss = [ball.pos, ball.pos]
 ball_pos = []
 trail = []
-data = [["t", "iner_v", "iner_a", "non-iner_v", "non-iner_a"]]
+data = [["t", "iner_pos", "iner_v", "iner_a", "non-iner_pos", "non-iner_v", "non-iner_a"]]
 start = False
 
 def key_method(evt):
@@ -166,9 +166,6 @@ while True:
     formula_ball.pos = ground.frame_to_world(ball_init_pos)
     update_line(dt, scene)
 
-    poss[0] = poss[1]*1
-    poss[1] = ball.pos*1
-
     if scene.mouse.events:
         mous = scene.mouse.getevent()
         if mous.click == "left":
@@ -181,28 +178,26 @@ while True:
 start = True
 footage.make_trail = True
 footage.retain = 1000
-ball.v = count_v(dt, poss)
+ball.v = cross(w, ball.pos)
 ball.a = gravity(ball.pos)
-ball_pos += [ball.pos*1, ball.pos*1]
+ball_pos += [ball.pos*1]
 trail += [ground.world_to_frame(earth.world_to_frame(ball.pos)), ground.world_to_frame(earth.world_to_frame(ball.pos))]
-data.append([count/100.0, ball.v, ball.a, "NO_DATA", "NO_DATA"])
-write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0"
-         % (w.y, dt, poss[0][0], poss[0][1], poss[0][2], poss[1][0], poss[1][1], poss[1][2]))
-write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
+data.append([count/100.0, ball.pos, ball.v, ball.a, vector(trail[-1]), "NO_DATA", "NO_DATA"])
+write("start %.18E %f %.18E %.18E %.18E %.18E %.18E %.18E\0" % (w.y, dt, ball.pos.x, ball.pos.y, ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
+write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
         % (count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z,
-            formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
+            formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
 
 dt = 0.001
 
 while True:
     rate(0.1/dt)
     
+    t += dt
+    count += 1
     timer.text = str(int(t*10)/10.0) + " hr"
     timer.yoffset = scene.height/2-100
     info_demo.xoffset = -(scene.width/2-180)
-    
-    t += dt
-    count += 1
 
     while True:
         mess = read().split('$')
@@ -212,9 +207,9 @@ while True:
     formula_ball.pos = vector(float(mess[5]), float(mess[6]), float(mess[7]))
     earth.rotate(angle = mag(w) * dt, axis = norm(w))
     update_line(dt, scene)
-    write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
+    write("c %d %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E %.18E\0"
             % (count, ball.pos.x, ball.pos.y, ball.pos.z, stick.pos.x, stick.pos.y, stick.pos.z,
-                formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z, formula_stick.pos.x, formula_stick.pos.y, formula_stick.pos.z))
+                formula_ball.pos.x, formula_ball.pos.y, formula_ball.pos.z))
     
     ball_pos.append(ball.pos*1)
     trail.append(ground.world_to_frame(earth.world_to_frame(ball.pos)))
@@ -226,8 +221,8 @@ while True:
         graph_trail = gcurve(gdisplay = g_trail, pos = (trail[-1][0], -trail[-1][2]), color = color.red)
         deviation = gcurve(gdisplay = g_dev, pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude), color = color.green)
     
-    if not(count % 5):
-        data.append([count/1000.0, count_v(dt, ball_pos[-2:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-2:]), count_a(dt, trail[-3:])])
+    if count > 1 and not((count-1) % 5):
+        data.append([count/1000.0, ball_pos[-1], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
         scene.center = timer.pos = info_demo.pos = earth.frame_to_world(ground.pos+vector(0,0.3,0))
