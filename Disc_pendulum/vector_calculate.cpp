@@ -24,7 +24,7 @@
 #include <sstream>
 #include <iomanip>
 #include "communicate.h"
-#include "vectorOperator.h"
+#include "vectorOperation.h"
 using namespace std;
 
 bool trywrite(char write[])
@@ -51,14 +51,14 @@ bool tryread(char read[])
 	}
 }
 
-inline vec springForce(vec axis, long double k, long double Len)
+inline vec springForce(vec axis, const long double& k, const long double& Len)
 {
-	return norm(axis) * -k * (mag(axis) - Len);
+	return -k * (axis.mag() - Len) * axis.norm();
 }
 
 inline vec damping(vec v, vec r)
 {
-	return norm(r) * dot(v, r) / mag(r) * -50;
+	return -50 * (dot(v, r) / r.mag()) * r.norm();
 }
 
 int main()
@@ -97,7 +97,7 @@ int main()
 		ballv = cross(w, ballpos);
 		balla = g + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
 		f_balla = g + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos)) / m 
-						- cross(w, f_ballv) * 2 - cross(w, cross(w, f_ballpos));
+						- 2 * cross(w, f_ballv) - cross(w, cross(w, f_ballpos));
 	}
 	else
 		return 1;
@@ -124,7 +124,7 @@ int main()
 			f_ballpos = f_ballpos + f_ballv * dt;
 			balla = g + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
 			f_balla = g + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos)) / m 
-						- cross(w, f_ballv) * 2 - cross(w, cross(w, f_ballpos));
+						- 2 * cross(w, f_ballv) - cross(w, cross(w, f_ballpos));
 		}
 		count++;
 		ss << 'c' << '$' << count << '$' << ballpos.x << '$' << ballpos.y << '$' << ballpos.z << '$'
