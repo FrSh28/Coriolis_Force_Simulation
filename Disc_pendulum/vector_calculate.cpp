@@ -24,6 +24,7 @@
 #include <sstream>
 #include <iomanip>
 #include "communicate.h"
+#include "vectorOperator.h"
 using namespace std;
 
 bool trywrite(char write[])
@@ -48,58 +49,6 @@ bool tryread(char read[])
 		cout << "client error " << GetLastError() << endl;
 		return false;
 	}
-}
-
-class vec{
-	public:
-	long double x;
-	long double y;
-	long double z;
-	
-	vec():x(0), y(0), z(0)
-	{}
-	vec(long double a, long double b, long double c):x(a), y(b), z(c)
-	{}
-};
-
-inline vec operator+(vec v1, vec v2)
-{
-	return vec(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z);
-}
-
-inline vec operator-(vec v1, vec v2)
-{
-	return vec(v1.x-v2.x, v1.y-v2.y, v1.z-v2.z);
-}
-
-inline vec operator*(vec v, const long double& n)
-{
-	return vec(v.x*n, v.y*n, v.z*n);
-}
-
-inline vec operator/(vec v, const long double& n)
-{
-	return vec(v.x/n, v.y/n, v.z/n);
-}
-
-inline vec cross(vec v1, vec v2)
-{
-	return vec((v1.y*v2.z - v1.z*v2.y), (v1.z*v2.x - v1.x*v2.z), (v1.x*v2.y - v1.y*v2.x));
-}
-
-inline long double dot(vec v1, vec v2)
-{
-	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
-}
-
-inline long double mag(vec v)
-{
-	return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-}
-
-inline vec norm(vec v)
-{
-	return v / mag(v);
 }
 
 inline vec springForce(vec axis, long double k, long double Len)
