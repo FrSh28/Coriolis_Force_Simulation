@@ -52,9 +52,9 @@ bool tryread(char read[])
 	}
 }
 
-inline vec gravity(vec distant)
+inline vec gravity(vec distance)
 {
-	return (-5158707301747.944L / distant.mag()) * distant.norm();
+	return (-5158707301747.944L / distance.mag()) * distance.norm();
 	//(9.80665 * (3600)^2 / 1000) * (6371)^2
 }
 
@@ -127,10 +127,10 @@ int main()
 		
 		for(int i = 0 ; i < 1000 ; i++)
 		{
-			ballv = ballv + balla * dt;
+			ballv = ballv + balla * dt;//
 			f_ballv = f_ballv + f_balla * dt;
 			ballpos = ballpos + ballv * dt;
-			f_ballpos = f_ballpos + f_ballv * dt;
+			f_ballpos = f_ballpos + f_ballv * dt;//
 			stickpos = stickpos + cross(w, stickpos) * dt;
 			balla = gravity(ballpos) + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
 			f_balla = gravity(f_ballpos) + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos))/ m 

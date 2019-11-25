@@ -118,10 +118,10 @@ int main()
 		
 		for(int i = 0 ; i < 1000 ; i++)
 		{
-			ballv = ballv + balla * dt;
+			ballv = ballv + balla * dt;//
 			f_ballv = f_ballv + f_balla * dt;
 			ballpos = ballpos + ballv * dt;
-			f_ballpos = f_ballpos + f_ballv * dt;
+			f_ballpos = f_ballpos + f_ballv * dt;//
 			balla = g + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
 			f_balla = g + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos)) / m 
 						- 2 * cross(w, f_ballv) - cross(w, cross(w, f_ballpos));
