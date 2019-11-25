@@ -213,7 +213,7 @@ while True:
     poss[1] = earth.frame_to_world(player.pos)*1
     
     for b in balls:
-        if b.time > balls_duration or mag(b.pos) - Er <= -0.01:
+        if b.time > balls_duration or mag(b.pos) - Er <= -0.01 or mag(b.pos) >= 5 * Er:
             for i in range(len(b.data)):
                 for j in range(6):
                     balls_data[i+2][j+b.num*6+1] = b.data[i][j]
