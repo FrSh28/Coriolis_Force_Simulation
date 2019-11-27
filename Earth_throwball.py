@@ -114,7 +114,7 @@ def new_ball():
                         time = 0.0, num = balln, v = cross(w, earth.frame_to_world(player.pos)) + balls_v * norm(earth.frame_to_world(fireaxis.axis)), a = vector(0, 0, 0), S = 0.0,
                         graph_trail = sphere(display = g_trail, radius = 300, color = graph_color, make_trail = True, trail_type = "points", material = materials.rough),
                         deviation = gcurve(gdisplay = g_dev, color = graph_color, dot = True, size = 5, dot_color = graph_color), dev_count = 0,
-                        data = [], dotn = 0, last_pos = earth.frame_to_world(player.pos)))
+                        data = [], dotn = 0))
     balls[-1].a = gravity(balls[-1].pos)
     balls[-1].graph_trail.trail_object.display = g_trail
     balls[-1].graph_trail.trail_object.size = 2
@@ -246,11 +246,12 @@ while True:
             b.graph_trail.pos = project(updater_lat, updater_lon, 1)
 
             if b.dotn > 1 and not((b.dotn-1) % 50):
-                b.data.append([b.pos, b.v, b.a - gravity(b.last_pos),
+                b.data.append([vector(b.trail_object.pos[-2]),
+                               vector(count_v(dt, b.trail_object.pos[-3:])),
+                               vector(count_a(dt, b.trail_object.pos[-3:])) - gravity(b.trail_object.pos[-2]),
                                vector(trails[balls.index(b)].pos[-2]),
                                vector(count_v(dt, trails[balls.index(b)].pos[-3:])),
                                vector(count_a(dt, trails[balls.index(b)].pos[-3:])) - gravity(vector(trails[balls.index(b)].pos[-2]))])
-                b.last_pos = b.pos*1
             arrows[balls.index(b)].pos = ballpos
             arrows[balls.index(b)].axis = (vector(count_a(dt, trails[balls.index(b)].pos[-3:]))
                                             - gravity(vector(trails[balls.index(b)].pos[-2]))) * 0.03

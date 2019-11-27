@@ -200,7 +200,7 @@ while True:
         deviation = gcurve(gdisplay = g_dev, pos = (t, mag(plate.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude), color = color.green)
 
     if count > 1 and not((count-1) % 5):
-        data.append([count/100.0, ball_pos[-2], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), vector(trail[-1]), count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
+        data.append([count/100.0, ball_pos[-2], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), vector(trail[-2]), count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
         scene.forward = -plate.frame_to_world(forward)

@@ -28,6 +28,7 @@ from output import*
 #Units: cm, s, radian
 rpm10 = 0       #rpm times 10
 w = vector(0, 2*pi*rpm10/600.0, 0)
+R = 10
 throw_dir = 0   #in degrees
 balls_v = 5.0
 balls_duration = 5.01
@@ -42,8 +43,8 @@ sleep(5)
 g_dev = gdisplay(x = 900, y = 0, width = 350, height = 350, title = "Deviation", xtitle = "t", ytitle = "%")
 gdots(gdisplay = g_dev, pos = [(-1, 0), (balls_duration+0.5, 0), (0, 0.01)], color = color.white, size = 0.01)
 
-g_trail = gdisplay(x = 900, y = 350, width = 350, height = 350, xmax = 10, xmin = -10, ymax = 10, ymin = -10, title = "Trail on Disc")
-gcurve(gdisplay = g_trail, pos = [(10*cos(radians(angle)), 10*sin(radians(angle))) for angle in range(380)], color = color.white)
+g_trail = gdisplay(x = 900, y = 350, width = 350, height = 350, xmax = R, xmin = -R, ymax = R, ymin = -R, title = "Trail on Disc")
+gcurve(gdisplay = g_trail, pos = [(R*cos(radians(angle)), R*sin(radians(angle))) for angle in range(380)], color = color.white)
 gdots(gdisplay = g_trail, pos = (0, -9), color = color.green, size = 8, shape = "square")
 gdots(gdisplay = g_trail, pos = (0, 9), color = color.yellow, size = 8, shape = "square")
 
@@ -58,7 +59,7 @@ info_demo = label(text = "  Rotation Speed(< >):\n    %s  rpm\n  Throw Direction
 
 floor = box(pos = vector(0, -0.75, 0), length = 25, width = 25, height = 0.5, material = materials.bricks)
 plate = frame(pos = vector(0, 0, 0))
-disc = cylinder(frame = plate, pos = vector(0, -0.5, 0), radius = 10, axis = vector(0, 0.5, 0), color = color.gray(0.7), material = materials.wood)
+disc = cylinder(frame = plate, pos = vector(0, -0.5, 0), radius = R, axis = vector(0, 0.5, 0), color = color.gray(0.7), material = materials.wood)
 pyramid(frame = plate, pos = vector(9, 0, 0), size = (0.6, 0.6, 0.6), axis = vector(0, 1, 0), color = color.yellow, material = materials.rough)
 player = pyramid(frame = plate, pos = vector(-9, 0, 0), size = (0.3, 0.6, 0.6), axis = vector(0, 1, 0), color = color.green, material = materials.rough)
 throw = arrow(frame = plate, pos = vector(-9, 0, 0), shaftwidth = 0.1, color = color.green, material = materials.rough)
@@ -154,7 +155,7 @@ while True:
         new_ball()
     
     for b in balls:
-        if b.time > balls_duration:
+        if b.time > balls_duration or mag(b.pos) >= 5 * R:
             for i in range(len(b.data)):
                 for j in range(6):
                     balls_data[i+2][j+b.num*6+1] = b.data[i][j]
@@ -176,7 +177,9 @@ while True:
                 b.deviation.plot(pos = (b.time, mag(ballpos - formula_balls[balls.index(b)].pos)*100.0 / b.S))
 
             if b.dotn > 1 and not((b.dotn-1) % 20):
-                b.data.append([b.pos, b.v, b.a,
+                b.data.append([vector(b.trail_object.pos[-2]),
+                               vector(count_v(dt, b.trail_object.pos[-3:])),
+                               vector(count_a(dt, b.trail_object.pos[-3:])),
                                vector(trails[balls.index(b)].pos[-2]),
                                vector(count_v(dt, trails[balls.index(b)].pos[-3:])),
                                vector(count_a(dt, trails[balls.index(b)].pos[-3:]))])
