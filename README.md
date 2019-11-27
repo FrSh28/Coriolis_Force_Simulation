@@ -1,6 +1,6 @@
 # Coriolis_Force_Simulation
 
-This project is aimed to develop some simulations about Coriolis force.
+This project is aimed to develop visualized simulations about Coriolis effect for high school students.
 
 ## Requirements:
 
