@@ -31,7 +31,7 @@ degree = 0.26251614     #Earth's rotation speed
 rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
-latitude = float(raw_input("latitude : "))  #in degrees
+latitude = float(raw_input("latitude : ")) % 90  #in degrees
 if latitude >= 0:
     str_latitude = str(latitude) + " N"
 else:

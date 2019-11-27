@@ -28,10 +28,10 @@ from output import*
 
 #Units: km, hr, radian
 degree = 0.26251614     #Earth's rotation speed
-rotate_ratio10 = 0     #rotate ratio times 10
+rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
-latitude = abs(float(raw_input("latitude : ")))  #in degrees
+latitude = abs(float(raw_input("latitude : "))) % 90  #in degrees
 init_angle = 0
 while init_angle <= 0:
     init_angle = float(raw_input("initial angle(<20 deg) : "))  #in degrees
