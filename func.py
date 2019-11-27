@@ -45,10 +45,18 @@ def spring_f(length, k, initlen = 0.0):
 
 def update(dt, scene):
     for i in scene.objects:
-        if hasattr(i, 'v') and hasattr(i, 'pos'):
-            i.pos += i.v *dt
-        if hasattr(i, 'v') and hasattr(i, 'S'):
-            i.S += mag(i.v *dt)
+        last_v = None
         if hasattr(i, 'a') and hasattr(i, 'v'):
+            last_v = i.v
             i.v += i.a * dt
+        if hasattr(i, 'v') and hasattr(i, 'pos'):
+            if last_v:
+                i.pos += (last_v+i.v)/2 * dt
+            else:
+                i.pos += i.v * dt
+        if hasattr(i, 'v') and hasattr(i, 'S'):
+            if last_v:
+                i.S += mag((last_v+i.v)/2 * dt)
+            else:
+                i.S += mag(i.v * dt)
 

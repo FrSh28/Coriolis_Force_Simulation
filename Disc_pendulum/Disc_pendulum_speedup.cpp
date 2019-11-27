@@ -67,8 +67,8 @@ int main()
 	char mess[500] = {0};
 	stringstream ss;
 	long double dt = 0, m = 0, k = 0, Len = 0, posx = 0, posy = 0, posz = 0;
-	vec w, ballpos, ballv, balla, stickpos, g;
-	vec f_ballpos, f_ballv, f_balla, f_stickpos;
+	vec w, ballpos, ballv, last_ballv, balla, stickpos, g;
+	vec f_ballpos, f_ballv, last_f_ballv, f_balla, f_stickpos;
 	
 	tryread(mess);
 	ss << mess;
@@ -118,10 +118,12 @@ int main()
 		
 		for(int i = 0 ; i < 1000 ; i++)
 		{
+			last_ballv = ballv;
+			last_f_ballv = f_ballv;
 			ballv = ballv + balla * dt;//
 			f_ballv = f_ballv + f_balla * dt;
-			ballpos = ballpos + ballv * dt;
-			f_ballpos = f_ballpos + f_ballv * dt;//
+			ballpos = ballpos + (ballv+last_ballv)/2 * dt;
+			f_ballpos = f_ballpos + (f_ballv+last_f_ballv)/2 * dt;//
 			balla = g + (springForce((ballpos-stickpos), k, Len) + damping(ballv, ballpos-stickpos)) / m;
 			f_balla = g + (springForce((f_ballpos-f_stickpos), k, Len) + damping(f_ballv, f_ballpos-f_stickpos)) / m 
 						- 2 * cross(w, f_ballv) - cross(w, cross(w, f_ballpos));

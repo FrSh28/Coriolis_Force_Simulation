@@ -48,7 +48,7 @@ print "\nUnits: km, hr\n"
 print "Controlings:\n left , right : change rotation speed\n i : camera rotates with Earth\n o : camera sets still\n r : save pendulum data"
 print "\nclick to release the pendulum\n\n*You can't change rotation speed after releasing the pendulum."
 #exe cpp
-subprocess.Popen([str(os.path.dirname(os.path.realpath(__file__)))+"\\vector_calculate.exe"])
+subprocess.Popen([str(os.path.dirname(os.path.realpath(__file__)))+"\\Earth_foucault_speedup.exe"])
 sleep(5)
 connect()
 write("init %f %f %f\0"%(m, kc, Length))
@@ -104,7 +104,6 @@ def update_line(dt, scene):
     footage.pos.z = ground.world_to_frame(earth.world_to_frame(ball.pos)).z
 
     formula_stick.pos = ground.frame_to_world(ceiling.pos)
-    print formula_stick.pos
     formula_stick.axis = formula_ball.pos - formula_stick.pos
     formula_footage.pos.x = ground.world_to_frame(formula_ball.pos).x
     formula_footage.pos.z = ground.world_to_frame(formula_ball.pos).z
@@ -136,7 +135,7 @@ def key_method(evt):
             rotate_ratio10 += 1
             w = vector(0, degree * (rotate_ratio10/10.0), 0)
             rota_demo = str(rotate_ratio10/10.0)
-        info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s N\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er)
+        info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er)
 
 sphere(frame = earth, radius = Er, material = materials.earth)
 [curve(pos = [vector(4000, -Er*1.2, z*400), vector(-4000, -Er*1.2, z*400)], color = color.gray(0.5)) for z in range(-10, 11)]
@@ -222,7 +221,7 @@ while True:
         deviation = gcurve(gdisplay = g_dev, pos = (t, mag(earth.world_to_frame(ball.pos) - formula_ball.pos)*100.0 / amplitude), color = color.green)
     
     if count > 1 and not((count-1) % 5):
-        data.append([count/1000.0, ball_pos[-1], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
+        data.append([count/1000.0, ball_pos[-2], count_v(dt, ball_pos[-3:]), count_a(dt, ball_pos[-3:]), trail[-2], count_v(dt, trail[-3:]), count_a(dt, trail[-3:])])
     
     if mode == "inside":
         scene.center = timer.pos = info_demo.pos = earth.frame_to_world(ground.pos+vector(0,0.3,0))
