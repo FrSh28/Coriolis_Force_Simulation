@@ -31,7 +31,13 @@ degree = 0.26251614     #Earth's rotation speed
 rotate_ratio10 = 10     #rotate ratio times 10
 w = vector(0, degree * rotate_ratio10/10.0, 0)
 Er = 6371
-latitude = abs(float(raw_input("latitude : "))) % 90  #in degrees
+latitude = float(raw_input("latitude : "))  #in degrees
+if latitude >= 0:
+    latitude %= 90
+    str_latitude = str(latitude) + " N"
+else:
+    latitude %= -90
+    str_latitude = str(-latitude) + " S"
 init_angle = 0
 while init_angle <= 0:
     init_angle = float(raw_input("initial angle(<20 deg) : "))  #in degrees
@@ -69,9 +75,8 @@ scene = display(width = 900, height = 700, center = vector(0, 0, 0), background 
 
 timer = label(text = "Click To Start", pos = scene.center, yoffset = scene.height/2-100, height = 50, color = color.red, box = False, line = False, opacity = 0)
 rota_demo = str(rotate_ratio10/10.0)
-latitude_str = str(latitude) + " N"
 info_demo = label(text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"
-                            % (rota_demo, str(latitude), str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
+                            % (rota_demo, str_latitude, str(init_angle), Er), pos = scene.center, xoffset = -(scene.width/2-180), height = 16, color = color.white, background = color.black, box = False, line = False, opacity = 0.7)
 
 earth = frame(pos = vector(0, 0, 0))
 ground = frame(frame = earth, pos = vector(0, Er * sin(radians(latitude)), Er * cos(radians(latitude))))
@@ -135,7 +140,7 @@ def key_method(evt):
             rotate_ratio10 += 1
             w = vector(0, degree * (rotate_ratio10/10.0), 0)
             rota_demo = str(rotate_ratio10/10.0)
-        info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str(latitude), str(degrees(angle)), Er)
+        info_demo.text = "  Rotation Speed(< >):\n    %sx\n  Latitude:\n    %s\n  Init Angle:\n    %s  deg\n  Earth Radius:\n    %s  km"%(rota_demo, str_latitude, str(degrees(angle)), Er)
 
 sphere(frame = earth, radius = Er, material = materials.earth)
 [curve(pos = [vector(4000, -Er*1.2, z*400), vector(-4000, -Er*1.2, z*400)], color = color.gray(0.5)) for z in range(-10, 11)]
